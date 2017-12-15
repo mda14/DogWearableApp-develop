@@ -1,0 +1,6 @@
+framework module Pods_DogWearableApp {
+  umbrella header "Pods-DogWearableApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

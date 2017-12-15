@@ -1,0 +1,6 @@
+framework module Pods_DogWearableAppUITests {
+  umbrella header "Pods-DogWearableAppUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

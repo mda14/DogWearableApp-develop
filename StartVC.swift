@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftSocket
 
 class StartVC: UIViewController {
     @IBOutlet weak internal var StartBtn: UIButton!
