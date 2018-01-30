@@ -21,6 +21,7 @@
 		2B0A58DA1FB4B374005D49B9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B0A58D81FB4B374005D49B9 /* LaunchScreen.storyboard */; };
 		2B0A58E51FB4B375005D49B9 /* DogWearableAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0A58E41FB4B375005D49B9 /* DogWearableAppTests.swift */; };
 		2B0A58F01FB4B375005D49B9 /* DogWearableAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0A58EF1FB4B375005D49B9 /* DogWearableAppUITests.swift */; };
+		2BA9E5521FE9763800F1CB12 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */; };
 		41CB0AF8EDAA7A95B37467C1 /* Pods_DogWearableAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F438CEA5304FEF3E2AF5778B /* Pods_DogWearableAppUITests.framework */; };
 		E0FD7A580A2510F11198E684 /* Pods_DogWearableAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A056318872C3B54CD9D86625 /* Pods_DogWearableAppTests.framework */; };
 		FA0453054E65EE25826AA08A /* Pods_DogWearableApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7318347C21A536DC22590AEE /* Pods_DogWearableApp.framework */; };
@@ -59,6 +60,7 @@
 		2B0A58EB1FB4B375005D49B9 /* DogWearableAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DogWearableAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B0A58EF1FB4B375005D49B9 /* DogWearableAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogWearableAppUITests.swift; sourceTree = "<group>"; };
 		2B0A58F11FB4B375005D49B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		67A1B6099FC8E00A9F0F21E8 /* Pods-DogWearableAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DogWearableAppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DogWearableAppTests/Pods-DogWearableAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7318347C21A536DC22590AEE /* Pods_DogWearableApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DogWearableApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		782CD9CEE55A60D212D0A512 /* Pods-DogWearableApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DogWearableApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-DogWearableApp/Pods-DogWearableApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BA9E5521FE9763800F1CB12 /* NetworkExtension.framework in Frameworks */,
 				FA0453054E65EE25826AA08A /* Pods_DogWearableApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,6 +165,7 @@
 		8465AB59455494F092F1B2E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */,
 				7318347C21A536DC22590AEE /* Pods_DogWearableApp.framework */,
 				A056318872C3B54CD9D86625 /* Pods_DogWearableAppTests.framework */,
 				F438CEA5304FEF3E2AF5778B /* Pods_DogWearableAppUITests.framework */,
@@ -348,10 +352,12 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-DogWearableApp/Pods-DogWearableApp-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSocket/SwiftSocket.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSocket.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -651,6 +657,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = AAWZ7VZHA5;
 				INFOPLIST_FILE = DogWearableApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Guder.DogWearableApp;
@@ -666,6 +673,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = AAWZ7VZHA5;
 				INFOPLIST_FILE = DogWearableApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Guder.DogWearableApp;
