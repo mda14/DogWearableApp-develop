@@ -8,15 +8,24 @@
 
 import UIKit
 import SwiftSocket
+import AWSCognitoIdentityProvider
 
 class StartVC: UIViewController  {
     @IBOutlet weak var StartBtn: UIButton!
     @IBOutlet weak var BackBtn: UIButton!
     @IBOutlet weak var ConnectBtn: UIButton!
 
+    var response: AWSCognitoIdentityUserGetDetailsResponse?
+    var user: AWSCognitoIdentityUser?
+    var pool: AWSCognitoIdentityUserPool?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.pool = AWSCognitoIdentityUserPool(forKey: AWSCognitoUserPoolsSignInProviderKey)
+        if (self.user == nil) {
+            self.user = self.pool?.currentUser()
+        }
+        self.refresh()
         // Do any additional setup after loading the view, typically from a nib.
     }
     
@@ -51,6 +60,16 @@ class StartVC: UIViewController  {
         // to view message printed need to decode
         let incoming_print = String(bytes: incoming.0!, encoding: String.Encoding.utf8)
         print("Data received: \(String(describing: incoming_print))")
+    }
+    
+    func refresh() {
+        self.user?.getDetails().continueOnSuccessWith { (task) -> AnyObject? in
+            DispatchQueue.main.async(execute: {
+                self.response = task.result
+                self.title = self.user?.username
+            })
+            return nil
+        }
     }
     
 }

@@ -10,9 +10,6 @@
 		2B08DC5A1FE3E87600991F82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B08DC581FE3E87600991F82 /* Main.storyboard */; };
 		2B08DC5B1FE3E87600991F82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B08DC581FE3E87600991F82 /* Main.storyboard */; };
 		2B08DC5C1FE3E87600991F82 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B08DC581FE3E87600991F82 /* Main.storyboard */; };
-		2B08DC6C1FE3E97F00991F82 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B08DC6A1FE3E97F00991F82 /* MainVC.swift */; };
-		2B08DC6D1FE3E97F00991F82 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B08DC6A1FE3E97F00991F82 /* MainVC.swift */; };
-		2B08DC6E1FE3E97F00991F82 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B08DC6A1FE3E97F00991F82 /* MainVC.swift */; };
 		2B08DC6F1FE3E97F00991F82 /* StartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B08DC6B1FE3E97F00991F82 /* StartVC.swift */; };
 		2B08DC701FE3E97F00991F82 /* StartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B08DC6B1FE3E97F00991F82 /* StartVC.swift */; };
 		2B08DC711FE3E97F00991F82 /* StartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B08DC6B1FE3E97F00991F82 /* StartVC.swift */; };
@@ -21,6 +18,12 @@
 		2B0A58DA1FB4B374005D49B9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B0A58D81FB4B374005D49B9 /* LaunchScreen.storyboard */; };
 		2B0A58E51FB4B375005D49B9 /* DogWearableAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0A58E41FB4B375005D49B9 /* DogWearableAppTests.swift */; };
 		2B0A58F01FB4B375005D49B9 /* DogWearableAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0A58EF1FB4B375005D49B9 /* DogWearableAppUITests.swift */; };
+		2B210059202A089C00C9ED9C /* SignUpConfirmVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B210058202A089C00C9ED9C /* SignUpConfirmVC.swift */; };
+		2B21005D202A349800C9ED9C /* ConfirmForgotPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B21005C202A349800C9ED9C /* ConfirmForgotPasswordVC.swift */; };
+		2B98F2E22028A7DC002D795A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98F2E12028A7DC002D795A /* Constants.swift */; };
+		2B98F2E82028AABE002D795A /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98F2E72028AABE002D795A /* LoginVC.swift */; };
+		2BA65A552029E94C000DAA0B /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA65A542029E94C000DAA0B /* SignUpVC.swift */; };
+		2BA65A572029E967000DAA0B /* ForgotPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA65A562029E967000DAA0B /* ForgotPasswordVC.swift */; };
 		2BA9E5521FE9763800F1CB12 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */; };
 		41CB0AF8EDAA7A95B37467C1 /* Pods_DogWearableAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F438CEA5304FEF3E2AF5778B /* Pods_DogWearableAppUITests.framework */; };
 		E0FD7A580A2510F11198E684 /* Pods_DogWearableAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A056318872C3B54CD9D86625 /* Pods_DogWearableAppTests.framework */; };
@@ -47,7 +50,6 @@
 /* Begin PBXFileReference section */
 		0315EB8AC494652D94ABC0A5 /* Pods-DogWearableAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DogWearableAppUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DogWearableAppUITests/Pods-DogWearableAppUITests.release.xcconfig"; sourceTree = "<group>"; };
 		2B08DC591FE3E87600991F82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = ../../DogWearableApp/DogWearableApp/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		2B08DC6A1FE3E97F00991F82 /* MainVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = SOURCE_ROOT; };
 		2B08DC6B1FE3E97F00991F82 /* StartVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartVC.swift; sourceTree = SOURCE_ROOT; };
 		2B0A58CC1FB4B374005D49B9 /* DogWearableApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DogWearableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B0A58CF1FB4B374005D49B9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -60,6 +62,12 @@
 		2B0A58EB1FB4B375005D49B9 /* DogWearableAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DogWearableAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B0A58EF1FB4B375005D49B9 /* DogWearableAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogWearableAppUITests.swift; sourceTree = "<group>"; };
 		2B0A58F11FB4B375005D49B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2B210058202A089C00C9ED9C /* SignUpConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpConfirmVC.swift; sourceTree = "<group>"; };
+		2B21005C202A349800C9ED9C /* ConfirmForgotPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmForgotPasswordVC.swift; sourceTree = "<group>"; };
+		2B98F2E12028A7DC002D795A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		2B98F2E72028AABE002D795A /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
+		2BA65A542029E94C000DAA0B /* SignUpVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
+		2BA65A562029E967000DAA0B /* ForgotPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordVC.swift; sourceTree = "<group>"; };
 		2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		67A1B6099FC8E00A9F0F21E8 /* Pods-DogWearableAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DogWearableAppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DogWearableAppTests/Pods-DogWearableAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7318347C21A536DC22590AEE /* Pods_DogWearableApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DogWearableApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,8 +111,12 @@
 		2B08DC691FE3E96D00991F82 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				2B08DC6A1FE3E97F00991F82 /* MainVC.swift */,
 				2B08DC6B1FE3E97F00991F82 /* StartVC.swift */,
+				2B98F2E72028AABE002D795A /* LoginVC.swift */,
+				2BA65A542029E94C000DAA0B /* SignUpVC.swift */,
+				2B210058202A089C00C9ED9C /* SignUpConfirmVC.swift */,
+				2BA65A562029E967000DAA0B /* ForgotPasswordVC.swift */,
+				2B21005C202A349800C9ED9C /* ConfirmForgotPasswordVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -134,11 +146,11 @@
 		2B0A58CE1FB4B374005D49B9 /* DogWearableApp */ = {
 			isa = PBXGroup;
 			children = (
+				2B98F2E62028A96E002D795A /* View */,
+				2B98F2E52028A955002D795A /* Model */,
 				2B08DC691FE3E96D00991F82 /* Controller */,
 				2B0A58CF1FB4B374005D49B9 /* AppDelegate.swift */,
 				2B0A58D61FB4B374005D49B9 /* Assets.xcassets */,
-				2B08DC581FE3E87600991F82 /* Main.storyboard */,
-				2B0A58D81FB4B374005D49B9 /* LaunchScreen.storyboard */,
 				2B0A58DB1FB4B375005D49B9 /* Info.plist */,
 			);
 			path = DogWearableApp;
@@ -160,6 +172,23 @@
 				2B0A58F11FB4B375005D49B9 /* Info.plist */,
 			);
 			path = DogWearableAppUITests;
+			sourceTree = "<group>";
+		};
+		2B98F2E52028A955002D795A /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2B98F2E12028A7DC002D795A /* Constants.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2B98F2E62028A96E002D795A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2B08DC581FE3E87600991F82 /* Main.storyboard */,
+				2B0A58D81FB4B374005D49B9 /* LaunchScreen.storyboard */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		8465AB59455494F092F1B2E9 /* Frameworks */ = {
@@ -352,11 +381,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-DogWearableApp/Pods-DogWearableApp-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSCognito/AWSCognito.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProvider/AWSCognitoIdentityProvider.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProviderASF/AWSCognitoIdentityProviderASF.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftSocket/SwiftSocket.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognito.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProvider.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProviderASF.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSocket.framework",
 			);
@@ -484,8 +521,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B0A58D01FB4B374005D49B9 /* AppDelegate.swift in Sources */,
-				2B08DC6C1FE3E97F00991F82 /* MainVC.swift in Sources */,
+				2B210059202A089C00C9ED9C /* SignUpConfirmVC.swift in Sources */,
 				2B08DC6F1FE3E97F00991F82 /* StartVC.swift in Sources */,
+				2B21005D202A349800C9ED9C /* ConfirmForgotPasswordVC.swift in Sources */,
+				2BA65A572029E967000DAA0B /* ForgotPasswordVC.swift in Sources */,
+				2B98F2E22028A7DC002D795A /* Constants.swift in Sources */,
+				2BA65A552029E94C000DAA0B /* SignUpVC.swift in Sources */,
+				2B98F2E82028AABE002D795A /* LoginVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,7 +536,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B0A58E51FB4B375005D49B9 /* DogWearableAppTests.swift in Sources */,
-				2B08DC6D1FE3E97F00991F82 /* MainVC.swift in Sources */,
 				2B08DC701FE3E97F00991F82 /* StartVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -504,7 +545,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B0A58F01FB4B375005D49B9 /* DogWearableAppUITests.swift in Sources */,
-				2B08DC6E1FE3E97F00991F82 /* MainVC.swift in Sources */,
 				2B08DC711FE3E97F00991F82 /* StartVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

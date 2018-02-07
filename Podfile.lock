@@ -1,15 +1,29 @@
 PODS:
+  - AWSCognito (2.6.10):
+    - AWSCore (= 2.6.10)
+  - AWSCognitoIdentityProvider (2.6.10):
+    - AWSCognitoIdentityProviderASF (= 1.0.1)
+    - AWSCore (= 2.6.10)
+  - AWSCognitoIdentityProviderASF (1.0.1)
+  - AWSCore (2.6.10)
   - CocoaAsyncSocket (7.6.2)
   - SwiftSocket (2.0.2)
 
 DEPENDENCIES:
+  - AWSCognito
+  - AWSCognitoIdentityProvider
+  - AWSCore
   - CocoaAsyncSocket
   - SwiftSocket
 
 SPEC CHECKSUMS:
+  AWSCognito: 94d97a52c51310dfd20f2db5dc4fce7ebce0e8dc
+  AWSCognitoIdentityProvider: f88d27fef26b131191da06c0a9a398e3c686945c
+  AWSCognitoIdentityProviderASF: f94f1a502e72ef3d0a1de93e10bf7a79c8698118
+  AWSCore: 5bb072a6b5b185f43ddbd239d6554d2f8a285ad2
   CocoaAsyncSocket: 3541e024f48c54b251638ef72d51dd42808de932
   SwiftSocket: 6f4c9c63fbc5c1d61188936bb3c599fd546f40ae
 
-PODFILE CHECKSUM: 3a518fbd18cd487dbdfffdbdaddf23dec4151bba
+PODFILE CHECKSUM: 9b35b32b55450e0bcd1c4019858599d4d18b13c7
 
 COCOAPODS: 1.3.1
