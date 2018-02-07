@@ -48,7 +48,8 @@ class ConfirmForgotPasswordVC: UIViewController {
                     
                     self?.present(alertController, animated: true, completion:  nil)
                 } else {
-                    let _ = strongSelf.navigationController?.popToRootViewController(animated: true)
+                    let _ = strongSelf.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+                   // let _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                 }
             })
             return nil

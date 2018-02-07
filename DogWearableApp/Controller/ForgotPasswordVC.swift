@@ -61,7 +61,7 @@ class ForgotPasswordVC: UIViewController {
                     
                     self?.present(alertController, animated: true, completion:  nil)
                 } else {
-                    strongSelf.performSegue(withIdentifier: "ConfirmForgotPasswordVC", sender: sender)
+                    strongSelf.performSegue(withIdentifier: "confirmForgotPasswordVC", sender: sender)
                 }
             })
             return nil

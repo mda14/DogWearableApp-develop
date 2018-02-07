@@ -11,9 +11,7 @@ import SwiftSocket
 import AWSCognitoIdentityProvider
 
 class StartVC: UIViewController  {
-    @IBOutlet weak var StartBtn: UIButton!
-    @IBOutlet weak var BackBtn: UIButton!
-    @IBOutlet weak var ConnectBtn: UIButton!
+
 
     var response: AWSCognitoIdentityUserGetDetailsResponse?
     var user: AWSCognitoIdentityUser?
@@ -34,19 +32,12 @@ class StartVC: UIViewController  {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func BackBtn(_ sender: Any) {
-        print("Back Button")
-    }
-    
-    @IBAction func connectToBoard(_ sender: Any) {
-        print("ConnectToBoard")
-        //check if user is connected to guderesearch WiFi
-        //if not, promt user to connect
-
-            }
     
     @IBAction func startUdpConnection(_ sender: Any) {
-
+        //check if user is connected to guderesearch WiFi
+        //if not, promt user to connect
+        
+        
         // Create UDP socket that connects to address and port of ESP32 board
         let client = UDPClient(address: "192.168.4.1", port: 3333)
         print("Client address:  \(client.address)")
@@ -61,6 +52,29 @@ class StartVC: UIViewController  {
         let incoming_print = String(bytes: incoming.0!, encoding: String.Encoding.utf8)
         print("Data received: \(String(describing: incoming_print))")
     }
+    
+    
+    @IBAction func clearData(_ sender: Any) {
+        //clear data in Plot
+    }
+    
+    @IBAction func stopPlotting(_ sender: Any) {
+        // stop plotting data
+    }
+    
+    @IBAction func saveData(_ sender: Any) {
+        // save current plot into user data
+    }
+    
+    @IBAction func signOut(_ sender: Any) {
+       
+        self.user?.signOut()
+        self.title = nil
+        self.response = nil
+        self.refresh()
+    
+    }
+    
     
     func refresh() {
         self.user?.getDetails().continueOnSuccessWith { (task) -> AnyObject? in

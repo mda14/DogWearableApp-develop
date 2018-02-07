@@ -14,10 +14,9 @@ class SignUpVC: UIViewController {
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var email: UITextField!
-    @IBOutlet weak var signUpButton: UIButton!
     
     var pool: AWSCognitoIdentityUserPool?
-    var sentTo: String?
+    //var sentTo: String?
 
     
     
@@ -76,7 +75,7 @@ class SignUpVC: UIViewController {
                     else if let result = task.result  {
                     // handle the case where user has to confirm his identity via email / SMS
                     if (result.user.confirmedStatus != AWSCognitoIdentityUserStatus.confirmed) {
-                        strongSelf.performSegue(withIdentifier: "confirmSignUpSegue", sender:sender)
+                        strongSelf.performSegue(withIdentifier: "confirmSignUpVC", sender:sender)
                     } else {
                         let _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                     }

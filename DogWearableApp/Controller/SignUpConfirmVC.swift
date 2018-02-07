@@ -14,8 +14,6 @@ class SignUpConfirmVC : UIViewController {
     
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var code: UITextField!
-    @IBOutlet weak var confirmButton: UIButton!
-    @IBOutlet weak var resendButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +47,8 @@ class SignUpConfirmVC : UIViewController {
                     
                     strongSelf.present(alertController, animated: true, completion:  nil)
                 } else {
-                    let _ = strongSelf.navigationController?.popToRootViewController(animated: true)
+                    let _ = strongSelf.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+                    //let _ = strongSelf.navigationController?.popToRootViewController(animated: true)
                 }
             })
             return nil
