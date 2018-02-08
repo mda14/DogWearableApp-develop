@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DogWearableApp/Controller/SignUpVC.swift"
-            timestampString = "539710473.291698"
+            timestampString = "539711248.046921"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "23"
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DogWearableApp/Controller/ConfirmForgotPasswordVC.swift"
-            timestampString = "539710473.2917759"
+            timestampString = "539711248.04703"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
             landmarkName = "updatePassword(_:)"
             landmarkType = "7">
          </BreakpointContent>

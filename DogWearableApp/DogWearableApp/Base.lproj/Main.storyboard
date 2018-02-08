@@ -228,6 +228,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="SJl-ue-wdQ"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Password Recovery" id="u6G-8O-dOs"/>
                     <connections>
                         <outlet property="username" destination="cdA-2t-qoo" id="LVM-NZ-gaQ"/>
                         <segue destination="xxy-fP-LdH" kind="show" identifier="confirmForgotPasswordVC" id="lOu-8j-i8Z"/>
@@ -321,6 +322,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="vKK-eA-he5"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Verification" id="74A-co-n9S"/>
                     <connections>
                         <outlet property="confirmationCode" destination="dfe-Od-dJC" id="cA5-FC-xqN"/>
                         <outlet property="proposedPassword" destination="HuH-NC-hYt" id="tXG-kV-K8X"/>
@@ -601,6 +603,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="EOV-ZT-TNh"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Sign Up Form" id="4AG-9F-fFT"/>
                     <connections>
                         <outlet property="email" destination="vEl-f6-rv1" id="o3A-jj-Dgh"/>
                         <outlet property="password" destination="9js-qP-64N" id="7rL-9R-OQ5"/>
@@ -728,6 +731,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="cWw-Lh-9HK"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Verification" id="VDl-dL-9s9"/>
                     <connections>
                         <outlet property="code" destination="d8q-cD-SXt" id="3Ik-2i-eAa"/>
                         <outlet property="username" destination="nmD-Ll-hbR" id="EM1-2x-x5a"/>

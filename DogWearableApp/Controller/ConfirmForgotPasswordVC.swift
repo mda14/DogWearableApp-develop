@@ -21,6 +21,10 @@ class ConfirmForgotPasswordVC: UIViewController {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
     // MARK: - IBActions
     
     @IBAction func updatePassword(_ sender: AnyObject) {

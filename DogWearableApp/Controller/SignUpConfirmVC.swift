@@ -20,6 +20,10 @@ class SignUpConfirmVC : UIViewController {
         self.username.text = self.user!.username;
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
     // MARK: IBActions
     
     // handle confirm sign up

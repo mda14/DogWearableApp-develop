@@ -21,7 +21,7 @@ class LoginVC: UIViewController {
         super.viewWillAppear(animated)
         self.password.text = nil
         self.username.text = usernameText
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     @IBAction func loginPressed(_ sender: AnyObject) {
