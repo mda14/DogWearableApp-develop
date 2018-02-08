@@ -47,16 +47,16 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         hostingView.hostedGraph = newGraph
         
         // Paddings
-        newGraph.paddingLeft   = 1.0
-        newGraph.paddingRight  = 1.0
-        newGraph.paddingTop    = 1.0
-        newGraph.paddingBottom = 1.0
+        newGraph.paddingLeft   = 0.1
+        newGraph.paddingRight  = 0.1
+        newGraph.paddingTop    = 0.1
+        newGraph.paddingBottom = 0.1
         
         // Plot space
         let plotSpace = newGraph.defaultPlotSpace as! CPTXYPlotSpace
         plotSpace.allowsUserInteraction = true
-        plotSpace.yRange = CPTPlotRange(location:-0.1, length:2.0)
-        plotSpace.xRange = CPTPlotRange(location:-0.1, length:3.0)
+        plotSpace.yRange = CPTPlotRange(location:-0.2, length:2.0)
+        plotSpace.xRange = CPTPlotRange(location:-0.2, length:3.0)
         
         // Axes
         let axisSet = newGraph.axisSet as! CPTXYAxisSet
