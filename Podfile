@@ -8,6 +8,7 @@ target 'DogWearableApp' do
     pod 'AWSCognito'
     pod 'AWSCognitoIdentityProvider'
     pod 'AWSCore'
+    pod 'CorePlot'
     
   # Pods for DogWearableApp
 
