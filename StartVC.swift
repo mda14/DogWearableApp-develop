@@ -9,11 +9,17 @@
 import UIKit
 import SwiftSocket
 import AWSCognitoIdentityProvider
+import CorePlot
 
 
-
-class StartVC: UIViewController, Rotatable  {
-
+class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable  {
+    
+    private var scatterGraph : CPTXYGraph? = nil
+    typealias plotDataType = [CPTScatterPlotField : Double]
+    private var dataForPlot = [plotDataType]()
+    
+    @IBOutlet weak var hostingView: CPTGraphHostingView!
+    
     var response: AWSCognitoIdentityUserGetDetailsResponse?
     var user: AWSCognitoIdentityUser?
     var pool: AWSCognitoIdentityUserPool?
@@ -27,6 +33,60 @@ class StartVC: UIViewController, Rotatable  {
         self.refresh()
         // Do any additional setup after loading the view, typically from a nib.
     }
+    
+    // MARK: Initialization
+    
+    override func viewDidAppear(_ animated : Bool)
+    {
+        super.viewDidAppear(animated)
+        
+        // Create graph from theme
+        let newGraph = CPTXYGraph(frame: .zero)
+        newGraph.apply(CPTTheme(named: .darkGradientTheme))
+        
+        hostingView.hostedGraph = newGraph
+        
+        // Paddings
+        newGraph.paddingLeft   = 1.0
+        newGraph.paddingRight  = 1.0
+        newGraph.paddingTop    = 1.0
+        newGraph.paddingBottom = 1.0
+        
+        // Plot space
+        let plotSpace = newGraph.defaultPlotSpace as! CPTXYPlotSpace
+        plotSpace.allowsUserInteraction = true
+        plotSpace.yRange = CPTPlotRange(location:-0.1, length:2.0)
+        plotSpace.xRange = CPTPlotRange(location:-0.1, length:3.0)
+        
+        // Axes
+        let axisSet = newGraph.axisSet as! CPTXYAxisSet
+        
+        if let x = axisSet.xAxis {
+            x.majorIntervalLength   = 0.5
+            x.orthogonalPosition    = 0
+            x.minorTicksPerInterval = 2
+            x.labelExclusionRanges  = [
+                CPTPlotRange(location: 0.99, length: 0.02),
+                CPTPlotRange(location: 1.99, length: 0.02),
+                CPTPlotRange(location: 2.99, length: 0.02)
+            ]
+        }
+        
+        if let y = axisSet.xAxis {
+            y.majorIntervalLength   = 0.5
+            y.minorTicksPerInterval = 5
+            y.orthogonalPosition    = 0
+            y.labelExclusionRanges  = [
+                CPTPlotRange(location: 0.99, length: 0.02),
+                CPTPlotRange(location: 1.99, length: 0.02),
+                CPTPlotRange(location: 3.99, length: 0.02)
+            ]
+            y.delegate = self
+        }
+        
+        
+    }
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -42,6 +102,7 @@ class StartVC: UIViewController, Rotatable  {
     }
     
     
+    //MARK - button functions
     
     @IBAction func startUdpConnection(_ sender: Any) {
         //check if user is connected to guderesearch WiFi
@@ -94,6 +155,68 @@ class StartVC: UIViewController, Rotatable  {
             })
             return nil
         }
+    }
+    
+    // MARK: - Plot Data Source Methods
+    
+    func numberOfRecords(for plot: CPTPlot) -> UInt
+    {
+        return UInt(self.dataForPlot.count)
+    }
+    
+    func number(for plot: CPTPlot, field: UInt, record: UInt) -> Any?
+    {
+        let plotField = CPTScatterPlotField(rawValue: Int(field))
+        
+        if let num = self.dataForPlot[Int(record)][plotField!] {
+            let plotID = plot.identifier as! String
+            if (plotField! == .Y) && (plotID == "Green Plot") {
+                return (num + 1.0) as NSNumber
+            }
+            else {
+                return num as NSNumber
+            }
+        }
+        else {
+            return nil
+        }
+    }
+    
+    // MARK: - Axis Delegate Methods
+    
+    private func axis(_ axis: CPTAxis, shouldUpdateAxisLabelsAtLocations locations: NSSet!) -> Bool
+    {
+        if let formatter = axis.labelFormatter {
+            let labelOffset = axis.labelOffset
+            
+            var newLabels = Set<CPTAxisLabel>()
+            
+            if let labelTextStyle = axis.labelTextStyle?.mutableCopy() as? CPTMutableTextStyle {
+                for location in locations {
+                    if let tickLocation = location as? NSNumber {
+                        if tickLocation.doubleValue >= 0.0 {
+                            labelTextStyle.color = .green()
+                        }
+                        else {
+                            labelTextStyle.color = .red()
+                        }
+                        
+                        let labelString   = formatter.string(for:tickLocation)
+                        let newLabelLayer = CPTTextLayer(text: labelString, style: labelTextStyle)
+                        
+                        let newLabel = CPTAxisLabel(contentLayer: newLabelLayer)
+                        newLabel.tickLocation = tickLocation
+                        newLabel.offset       = labelOffset
+                        
+                        newLabels.insert(newLabel)
+                    }
+                }
+                
+                axis.axisLabels = newLabels
+            }
+        }
+        
+        return false
     }
 }
 

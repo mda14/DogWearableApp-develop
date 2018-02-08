@@ -10,13 +10,14 @@ import UIKit
 import AWSCognitoIdentityProvider
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegate {
 
     var window: UIWindow?
     var loginVC: LoginVC?
     var navigationController: UINavigationController?
     var storyboard: UIStoryboard?
     var rememberDeviceCompletionSource: AWSTaskCompletionSource<NSNumber>?
+    var tabBarController: UITabBarController? = nil
 
     
     
@@ -54,6 +55,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         pool.delegate = self
         
         return true
+    }
+    
+    func applicationDidFinishLaunching(_ application: UIApplication) {
+        if let myWindow = self.window {
+            myWindow.rootViewController = self.tabBarController
+            myWindow.makeKeyAndVisible()
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
