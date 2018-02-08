@@ -18,7 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var storyboard: UIStoryboard?
     var rememberDeviceCompletionSource: AWSTaskCompletionSource<NSNumber>?
 
-
+    
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
@@ -147,6 +148,35 @@ extension AppDelegate: AWSCognitoIdentityRememberDevice {
                 }
             }
         }
+    }
+}
+
+// MARK: - Device rotation support
+extension AppDelegate {
+    // The app disables rotation for all view controllers except for a few that opt-in by conforming to the Rotatable protocol
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        guard
+            let _ = topViewController(for: window?.rootViewController) as? Rotatable
+            else { return .portrait }
+        return .landscape
+    }
+    
+    private func topViewController(for rootViewController: UIViewController!) -> UIViewController? {
+        guard let rootVC = rootViewController else { return nil }
+        
+        if rootVC is UITabBarController {
+            let rootTabBarVC = rootVC as! UITabBarController
+            
+            return topViewController(for: rootTabBarVC.selectedViewController)
+        } else if rootVC is UINavigationController {
+            let rootNavVC = rootVC as! UINavigationController
+            
+            return topViewController(for: rootNavVC.visibleViewController)
+        } else if let rootPresentedVC = rootVC.presentedViewController {
+            return topViewController(for: rootPresentedVC)
+        }
+        
+        return rootViewController
     }
 }
 

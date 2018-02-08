@@ -10,8 +10,9 @@ import UIKit
 import SwiftSocket
 import AWSCognitoIdentityProvider
 
-class StartVC: UIViewController  {
 
+
+class StartVC: UIViewController, Rotatable  {
 
     var response: AWSCognitoIdentityUserGetDetailsResponse?
     var user: AWSCognitoIdentityUser?
@@ -31,6 +32,15 @@ class StartVC: UIViewController  {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewWillDisappear(_ animated : Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParentViewController {
+                resetToPortrait()
+        }
+    }
+    
     
     
     @IBAction func startUdpConnection(_ sender: Any) {
@@ -85,5 +95,14 @@ class StartVC: UIViewController  {
             return nil
         }
     }
-    
 }
+
+protocol Rotatable: AnyObject {
+    func resetToPortrait()
+}
+extension Rotatable where Self: UIViewController {
+    func resetToPortrait() {
+        UIDevice.current.setValue(Int(UIInterfaceOrientation.portrait.rawValue), forKey: "orientation")
+    }
+}
+
