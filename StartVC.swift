@@ -17,6 +17,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     private var scatterGraph : CPTXYGraph? = nil
     typealias plotDataType = [CPTScatterPlotField : Double]
     private var dataForPlot = [plotDataType]()
+    var plotSpace: CPTXYPlotSpace?
     
     @IBOutlet weak var hostingView: CPTGraphHostingView!
     
@@ -58,10 +59,10 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         newGraph.paddingBottom = 0.1
         
         // Plot space
-        let plotSpace = newGraph.defaultPlotSpace as! CPTXYPlotSpace
-        plotSpace.allowsUserInteraction = true
-        plotSpace.yRange = CPTPlotRange(location:-0.2, length:2.0)
-        plotSpace.xRange = CPTPlotRange(location:-0.2, length:3.0)
+        self.plotSpace = newGraph.defaultPlotSpace as? CPTXYPlotSpace
+        self.plotSpace?.allowsUserInteraction = true
+        self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length:2.0)
+        self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length:3.0)
         
         // Axes
         let axisSet = newGraph.axisSet as! CPTXYAxisSet
@@ -156,21 +157,23 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         print("Result: \(result.isSuccess)")
         start = true
         
-        //run in background
+        //run in background until pressed stop
         DispatchQueue.main.async(execute: {
-            while(self.start){
-                let raw = client.recv(1024*10)
-                let incoming_print = String(bytes: raw.0!, encoding: String.Encoding.utf8)
-                print("Data received: \(String(describing: incoming_print))")
-                let data = Data(bytes: raw.0!)
-                let value = UInt32(bigEndian: data.withUnsafeBytes { $0.pointee })
-                //let floatRaw = Double(incoming_print)
+           // while(self.start){
+                let dataLength = 50
+                let raw = client.recv(dataLength)
+                print("Incoming raw data: \(String(describing: raw))")
                 var contentArray = [plotDataType]()
-                let dataPoint: plotDataType = [.X: Double(value), .Y: Double(value)]
-                contentArray.append(dataPoint)
+                for i in 0...dataLength-1 {
+                    let dataPoint: plotDataType = [.X: Double(raw.0![i]), .Y: 1]
+                    contentArray.append(dataPoint)
+                }
                 self.dataForPlot = contentArray
-
-            }
+                self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: 3.0)
+                self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: 50.0)
+                self.scatterGraph?.reloadData()
+            
+            //}
         })
         
     }
