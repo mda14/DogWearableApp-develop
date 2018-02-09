@@ -183,7 +183,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     @IBAction func stopPlotting(_ sender: Any) {
         // stop plotting data
         start = false
-        _ = client.send(string: "stop")
+       // _ = client.send(string: "stop")
     }
     
     @IBAction func saveData(_ sender: Any) {
