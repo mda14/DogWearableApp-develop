@@ -24,6 +24,11 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var user: AWSCognitoIdentityUser?
     var pool: AWSCognitoIdentityUserPool?
     
+   // var incoming: IncomingData
+    var start = true
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.pool = AWSCognitoIdentityUserPool(forKey: AWSCognitoUserPoolsSignInProviderKey)
@@ -84,6 +89,37 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             y.delegate = self
         }
         
+        //new blue plot
+        let boundLinePlot = CPTScatterPlot(frame: .zero)
+        let blueLineStyle = CPTMutableLineStyle()
+        blueLineStyle.miterLimit    = 1.0
+        blueLineStyle.lineWidth     = 3.0
+        blueLineStyle.lineColor     = .blue()
+        boundLinePlot.dataLineStyle = blueLineStyle
+        boundLinePlot.identifier    = NSString.init(string: "Blue Plot")
+        boundLinePlot.dataSource    = self
+        newGraph.add(boundLinePlot)
+        
+        // Add plot symbols
+        let symbolLineStyle = CPTMutableLineStyle()
+        symbolLineStyle.lineColor = .black()
+        let plotSymbol = CPTPlotSymbol.ellipse()
+        plotSymbol.fill          = CPTFill(color: .blue())
+        plotSymbol.lineStyle     = symbolLineStyle
+        plotSymbol.size          = CGSize(width: 10.0, height: 10.0)
+        boundLinePlot.plotSymbol = plotSymbol
+        
+        
+        self.scatterGraph = newGraph
+//        // Add some initial data
+//        var contentArray = [plotDataType]()
+//        for i in 0 ..< 60 {
+//            let x = 1.0 + Double(i) * 0.05
+//            let y = 1.2 * Double(arc4random()) / Double(UInt32.max) + 1.2
+//            let dataPoint: plotDataType = [.X: x, .Y: y]
+//            contentArray.append(dataPoint)
+//        }
+//        self.dataForPlot = contentArray
         
     }
 
@@ -118,10 +154,25 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         let data = "start" // ... Bytes you want to send
         let result = client.send(string: data)
         print("Result: \(result.isSuccess)")
-        let incoming = client.recv(1024*10)
-        // to view message printed need to decode
-        let incoming_print = String(bytes: incoming.0!, encoding: String.Encoding.utf8)
-        print("Data received: \(String(describing: incoming_print))")
+        start = true
+        
+        //run in background
+        DispatchQueue.main.async(execute: {
+            while(self.start){
+                let raw = client.recv(1024*10)
+                let incoming_print = String(bytes: raw.0!, encoding: String.Encoding.utf8)
+                print("Data received: \(String(describing: incoming_print))")
+                let data = Data(bytes: raw.0!)
+                let value = UInt32(bigEndian: data.withUnsafeBytes { $0.pointee })
+                //let floatRaw = Double(incoming_print)
+                var contentArray = [plotDataType]()
+                let dataPoint: plotDataType = [.X: Double(value), .Y: Double(value)]
+                contentArray.append(dataPoint)
+                self.dataForPlot = contentArray
+
+            }
+        })
+        
     }
     
     
@@ -131,6 +182,8 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     @IBAction func stopPlotting(_ sender: Any) {
         // stop plotting data
+        start = false
+        _ = client.send(string: "stop")
     }
     
     @IBAction func saveData(_ sender: Any) {
