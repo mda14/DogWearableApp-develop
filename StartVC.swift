@@ -207,6 +207,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     @IBAction func stopPlotting(_ sender: Any) {
         // stop plotting data
         self.timerBackground?.invalidate()
+        print("Stop plotting")
        // _ = client.send(string: "stop")
     }
     
