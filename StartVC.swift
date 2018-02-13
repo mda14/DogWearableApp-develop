@@ -11,7 +11,6 @@ import SwiftSocket
 import AWSCognitoIdentityProvider
 import CorePlot
 
-
 class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable  {
     
     private var scatterGraph : CPTXYGraph? = nil
@@ -26,7 +25,10 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var pool: AWSCognitoIdentityUserPool?
     
    // var incoming: IncomingData
-    var start = true
+    var start : Bool?
+    var maxY = 3.0
+    var x = 0.0
+    var contentArray = [plotDataType]()
     
     
     
@@ -155,32 +157,45 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         let data = "start" // ... Bytes you want to send
         let result = client.send(string: data)
         print("Result: \(result.isSuccess)")
-        start = true
+        if (result.isSuccess == true){
+            start = true
+        }
         
         //run in background until pressed stop
-        DispatchQueue.main.async(execute: {
-           // while(self.start){
-                let dataLength = 50
-                let raw = client.recv(dataLength)
-                print("Incoming raw data: \(String(describing: raw))")
-                var contentArray = [plotDataType]()
-                for i in 0...dataLength-1 {
-                    let dataPoint: plotDataType = [.X: Double(raw.0![i]), .Y: 1]
-                    contentArray.append(dataPoint)
-                }
-                self.dataForPlot = contentArray
-                self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: 3.0)
-                self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: 50.0)
-                self.scatterGraph?.reloadData()
-            
-            //}
-        })
+        //while(self.start)!{
+            DispatchQueue.main.async(execute: {
+                    let dataLength = 50
+                    let raw = client.recv(dataLength)
+                    print("Incoming raw data: \(String(describing: raw))")
+                
+                    for i in 0...dataLength-1 {
+                        let yValue = Double(raw.0![i])
+                        let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
+                        if (yValue > self.maxY){
+                            self.maxY = yValue
+                        }
+                        self.x = self.x + 1
+                        self.contentArray.append(dataPoint)
+                    }
+                    self.dataForPlot = self.contentArray
+                    self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
+                    self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
+                    self.scatterGraph?.reloadData()
+            })
+           // }
         
     }
     
     
     @IBAction func clearData(_ sender: Any) {
         //clear data in Plot
+        self.x = 0
+        self.maxY = 0
+        self.contentArray.removeAll()
+        self.dataForPlot = self.contentArray
+        self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
+        self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
+        self.scatterGraph?.reloadData()
     }
     
     @IBAction func stopPlotting(_ sender: Any) {
