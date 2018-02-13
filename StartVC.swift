@@ -25,10 +25,14 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var pool: AWSCognitoIdentityUserPool?
     
    // var incoming: IncomingData
-    var start : Bool?
     var maxY = 3.0
     var x = 0.0
     var contentArray = [plotDataType]()
+    
+    // Create UDP socket that connects to address and port of ESP32 board
+    let client = UDPClient(address: "192.168.4.1", port: 3333)
+    
+    var timerBackground : Timer?
     
     
     
@@ -148,41 +152,43 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         //if not, promt user to connect
         
         
-        // Create UDP socket that connects to address and port of ESP32 board
-        let client = UDPClient(address: "192.168.4.1", port: 3333)
-        print("Client address:  \(client.address)")
-        client.enableBroadcast()
-
+//        // Create UDP socket that connects to address and port of ESP32 board
+//        let client = UDPClient(address: "192.168.4.1", port: 3333)
+//        print("Client address:  \(client.address)")
+        
+        print("Client address:  \(self.client.address)")
         // Send 'start' string for board to start sending data
         let data = "start" // ... Bytes you want to send
-        let result = client.send(string: data)
+        let result = self.client.send(string: data)
         print("Result: \(result.isSuccess)")
-        if (result.isSuccess == true){
-            start = true
-        }
         
+        self.timerBackground = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
+            timerBackground in
+            self.someBackgroundTask(timer: self.timerBackground!)
+        }
         //run in background until pressed stop
         //while(self.start)!{
-            DispatchQueue.main.async(execute: {
-                    let dataLength = 50
-                    let raw = client.recv(dataLength)
-                    print("Incoming raw data: \(String(describing: raw))")
-                
-                    for i in 0...dataLength-1 {
-                        let yValue = Double(raw.0![i])
-                        let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
-                        if (yValue > self.maxY){
-                            self.maxY = yValue
-                        }
-                        self.x = self.x + 1
-                        self.contentArray.append(dataPoint)
-                    }
-                    self.dataForPlot = self.contentArray
-                    self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
-                    self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
-                    self.scatterGraph?.reloadData()
-            })
+//            DispatchQueue.main.async(execute: {
+//                    let dataLength = 50
+//                    let raw = self.client.recv(dataLength)
+//                    print("Incoming raw data: \(String(describing: raw))")
+//
+//                    for i in 0...dataLength-1 {
+//                        let yValue = Double(raw.0![i])
+//                        let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
+//                        if (yValue > self.maxY){
+//                            self.maxY = yValue
+//                        }
+//                        self.x = self.x + 1
+//                        self.contentArray.append(dataPoint)
+//                    }
+//                    self.dataForPlot = self.contentArray
+//                    self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
+//                    self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
+//                    self.scatterGraph?.reloadData()
+//            })
            // }
+
         
     }
     
@@ -200,7 +206,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     @IBAction func stopPlotting(_ sender: Any) {
         // stop plotting data
-        start = false
+        self.timerBackground?.invalidate()
        // _ = client.send(string: "stop")
     }
     
@@ -217,7 +223,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     }
     
-    
+    // MARK: - Refresh user
     func refresh() {
         self.user?.getDetails().continueOnSuccessWith { (task) -> AnyObject? in
             DispatchQueue.main.async(execute: {
@@ -225,6 +231,34 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 self.title = self.user?.username
             })
             return nil
+        }
+    }
+    
+    // MARK: - Plot incoming data
+    func someBackgroundTask(timer:Timer) {
+        DispatchQueue.global(qos: DispatchQoS.background.qosClass).async {
+            print("do some background task")
+            let dataLength = 50
+            let raw = self.client.recv(dataLength)
+            print("Incoming raw data: \(String(describing: raw))")
+            
+            for i in 0...dataLength-1 {
+                let yValue = Double(raw.0![i])
+                let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
+                if (yValue > self.maxY){
+                    self.maxY = yValue
+                }
+                self.x = self.x + 1
+                self.contentArray.append(dataPoint)
+            }
+            
+            DispatchQueue.main.async {
+                print("update some UI")
+                self.dataForPlot = self.contentArray
+                self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
+                self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
+                self.scatterGraph?.reloadData()
+            }
         }
     }
     
