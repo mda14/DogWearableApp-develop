@@ -19,6 +19,7 @@ class ConfirmForgotPasswordVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -61,4 +62,5 @@ class ConfirmForgotPasswordVC: UIViewController {
     }
     
 }
+
 

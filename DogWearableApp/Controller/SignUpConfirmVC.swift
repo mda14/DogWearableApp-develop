@@ -17,7 +17,8 @@ class SignUpConfirmVC : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.username.text = self.user!.username;
+        self.username.text = self.user!.username
+        self.hideKeyboard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -87,5 +88,6 @@ class SignUpConfirmVC : UIViewController {
     }
     
 }
+
 
 

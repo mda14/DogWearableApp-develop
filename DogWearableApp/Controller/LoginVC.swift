@@ -24,6 +24,11 @@ class LoginVC: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.hideKeyboard()
+    }
+    
     @IBAction func loginPressed(_ sender: AnyObject) {
         if (self.username.text != nil && self.password.text != nil) {
             let authDetails = AWSCognitoIdentityPasswordAuthenticationDetails(username: self.username.text!, password: self.password.text! )

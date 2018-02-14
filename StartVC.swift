@@ -82,6 +82,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 CPTPlotRange(location: 1.99, length: 0.02),
                 CPTPlotRange(location: 2.99, length: 0.02)
             ]
+            x.delegate = self //this line was missing before
         }
         
         if let y = axisSet.xAxis {
@@ -151,14 +152,9 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         //check if user is connected to guderesearch WiFi
         //if not, promt user to connect
         
-        
-//        // Create UDP socket that connects to address and port of ESP32 board
-//        let client = UDPClient(address: "192.168.4.1", port: 3333)
-//        print("Client address:  \(client.address)")
-        
         print("Client address:  \(self.client.address)")
         // Send 'start' string for board to start sending data
-        let data = "start" // ... Bytes you want to send
+        let data = "start"
         let result = self.client.send(string: data)
         print("Result: \(result.isSuccess)")
         
@@ -166,30 +162,6 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             timerBackground in
             self.someBackgroundTask(timer: self.timerBackground!)
         }
-        //run in background until pressed stop
-        //while(self.start)!{
-//            DispatchQueue.main.async(execute: {
-//                    let dataLength = 50
-//                    let raw = self.client.recv(dataLength)
-//                    print("Incoming raw data: \(String(describing: raw))")
-//
-//                    for i in 0...dataLength-1 {
-//                        let yValue = Double(raw.0![i])
-//                        let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
-//                        if (yValue > self.maxY){
-//                            self.maxY = yValue
-//                        }
-//                        self.x = self.x + 1
-//                        self.contentArray.append(dataPoint)
-//                    }
-//                    self.dataForPlot = self.contentArray
-//                    self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
-//                    self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
-//                    self.scatterGraph?.reloadData()
-//            })
-           // }
-
-        
     }
     
     
