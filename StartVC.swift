@@ -10,6 +10,7 @@ import UIKit
 import SwiftSocket
 import AWSCognitoIdentityProvider
 import CorePlot
+import SystemConfiguration.CaptiveNetwork
 
 class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable  {
     
@@ -150,17 +151,26 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     @IBAction func startUdpConnection(_ sender: Any) {
         //check if user is connected to guderesearch WiFi
-        //if not, promt user to connect
-        
-        print("Client address:  \(self.client.address)")
-        // Send 'start' string for board to start sending data
-        let data = "start"
-        let result = self.client.send(string: data)
-        print("Result: \(result.isSuccess)")
-        
-        self.timerBackground = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
-            timerBackground in
-            self.someBackgroundTask(timer: self.timerBackground!)
+        let ssid = self.getWiFiSsid()
+        if (ssid != "guderesearch") {
+            let alertController = UIAlertController(title: "Wrong WiFi",
+                                                    message: "Please connect to 'guderesearch' WiFi",
+                                                    preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion:  nil)
+        }
+        else {
+            print("Client address:  \(self.client.address)")
+            // Send 'start' string for board to start sending data
+            let data = "start"
+            let result = self.client.send(string: data)
+            print("Result: \(result.isSuccess)")
+            
+            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
+                timerBackground in
+                self.someBackgroundTask(timer: self.timerBackground!)
+            }
         }
     }
     
@@ -258,6 +268,21 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         else {
             return nil
         }
+    }
+    
+    // MARK: - Checking SSID of correct connection
+    
+    func getWiFiSsid() -> String? {
+        var ssid: String?
+        if let interfaces = CNCopySupportedInterfaces() as NSArray? {
+            for interface in interfaces {
+                if let interfaceInfo = CNCopyCurrentNetworkInfo(interface as! CFString) as NSDictionary? {
+                    ssid = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
+                    break
+                }
+            }
+        }
+        return ssid
     }
     
     // MARK: - Axis Delegate Methods
