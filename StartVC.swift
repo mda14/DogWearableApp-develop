@@ -27,8 +27,13 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
    // var incoming: IncomingData
     var maxY = 3.0
+    var minY = -0.2
     var x = 0.0
     var contentArray = [plotDataType]()
+    var yContent = [plotDataType]()
+    var zContent = [plotDataType]()
+    
+    let movingWindowLength = 100.0
     
     // Create UDP socket that connects to address and port of ESP32 board
     let client = UDPClient(address: "192.168.4.1", port: 3333)
@@ -156,7 +161,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             let alertController = UIAlertController(title: "Wrong WiFi",
                                                     message: "Please connect to 'guderesearch' WiFi",
                                                     preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(okAction)
             self.present(alertController, animated: true, completion:  nil)
         }
@@ -166,8 +171,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             let data = "start"
             let result = self.client.send(string: data)
             print("Result: \(result.isSuccess)")
-            
-            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
+            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) {
                 timerBackground in
                 self.someBackgroundTask(timer: self.timerBackground!)
             }
@@ -177,6 +181,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     @IBAction func clearData(_ sender: Any) {
         //clear data in Plot
+        print("Clear graph")
         self.x = 0
         self.maxY = 0
         self.contentArray.removeAll()
@@ -198,12 +203,10 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     }
     
     @IBAction func signOut(_ sender: Any) {
-       
         self.user?.signOut()
         self.title = nil
         self.response = nil
         self.refresh()
-    
     }
     
     // MARK: - Refresh user
@@ -219,33 +222,40 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     // MARK: - Plot incoming data
     func someBackgroundTask(timer:Timer) {
-        DispatchQueue.global(qos: DispatchQoS.background.qosClass).async {
+        var counter = 0
+        let dataLength = 150
+        //background queueDispatchQoS.background.qosClass
+        DispatchQueue.global(qos: DispatchQoS.default.qosClass).async {
             print("do some background task")
-            let dataLength = 50
             let raw = self.client.recv(dataLength)
             print("Incoming raw data: \(String(describing: raw))")
-            
+
             for i in 0...dataLength-1 {
                 let yValue = Double(raw.0![i])
                 let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
-                if (yValue > self.maxY){
-                    self.maxY = yValue
-                }
+                if (yValue > self.maxY){self.maxY = yValue}
+                if (yValue < self.minY){self.minY = yValue}
                 self.x = self.x + 1
-                self.contentArray.append(dataPoint)
+                if (i <= 50) {self.contentArray.append(dataPoint)}
+                if (i == 50) {self.x = 0}
+                if (i > 50 && i <= 100){self.yContent.append(dataPoint)}
+                if (i == 100) {self.x = 0}
+                if(i > 100){self.zContent.append(dataPoint)}
             }
-            
             DispatchQueue.main.async {
                 print("update some UI")
                 self.dataForPlot = self.contentArray
-                self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
-                self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
+                self.plotSpace?.yRange = CPTPlotRange(location: NSNumber(value: self.minY), length: NSNumber(value: 2.0+self.maxY))
+                self.plotSpace?.xRange = CPTPlotRange(location: NSNumber(value: counter), length: NSNumber(value: self.contentArray.count))
                 self.scatterGraph?.reloadData()
             }
         }
+        counter = counter + dataLength
+        
     }
     
     // MARK: - Plot Data Source Methods
+    // currently not used!
     
     func numberOfRecords(for plot: CPTPlot) -> UInt
     {
