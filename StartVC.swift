@@ -33,7 +33,12 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var yContent = [plotDataType]()
     var zContent = [plotDataType]()
     
-    let movingWindowLength = 100.0
+    var counter = 0
+    let dataLength = 152
+    var rawData : [Byte]?
+    
+    let movingWindowLength = 80.0
+    var lastX = 0
     
     // Create UDP socket that connects to address and port of ESP32 board
     let client = UDPClient(address: "192.168.4.1", port: 3333)
@@ -73,46 +78,46 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         // Plot space
         self.plotSpace = newGraph.defaultPlotSpace as? CPTXYPlotSpace
         self.plotSpace?.allowsUserInteraction = true
-        self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length:2.0)
-        self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length:3.0)
+        self.plotSpace?.yRange = CPTPlotRange(location:-7, length:18.0)
+        self.plotSpace?.xRange = CPTPlotRange(location:-10, length: NSNumber(value: movingWindowLength))
         
         // Axes
         let axisSet = newGraph.axisSet as! CPTXYAxisSet
         
         if let x = axisSet.xAxis {
-            x.majorIntervalLength   = 0.5
+            x.majorIntervalLength   = 15
             x.orthogonalPosition    = 0
-            x.minorTicksPerInterval = 2
-            x.labelExclusionRanges  = [
-                CPTPlotRange(location: 0.99, length: 0.02),
-                CPTPlotRange(location: 1.99, length: 0.02),
-                CPTPlotRange(location: 2.99, length: 0.02)
-            ]
+            x.minorTicksPerInterval = 1
+//            x.labelExclusionRanges  = [
+//                CPTPlotRange(location: 0.99, length: 0.02),
+//                CPTPlotRange(location: 1.99, length: 0.02),
+//                CPTPlotRange(location: 2.99, length: 0.02)
+//            ]
             x.delegate = self //this line was missing before
         }
         
-        if let y = axisSet.xAxis {
-            y.majorIntervalLength   = 0.5
-            y.minorTicksPerInterval = 5
+        if let y = axisSet.yAxis {
+            y.majorIntervalLength   = 5
+            y.minorTicksPerInterval = 1
             y.orthogonalPosition    = 0
-            y.labelExclusionRanges  = [
-                CPTPlotRange(location: 0.99, length: 0.02),
-                CPTPlotRange(location: 1.99, length: 0.02),
-                CPTPlotRange(location: 3.99, length: 0.02)
-            ]
+//            y.labelExclusionRanges  = [
+//                CPTPlotRange(location: 0.99, length: 0.02),
+//                CPTPlotRange(location: 1.99, length: 0.02),
+//                CPTPlotRange(location: 3.99, length: 0.02)
+//            ]
             y.delegate = self
         }
         
-        //new blue plot
-        let boundLinePlot = CPTScatterPlot(frame: .zero)
+        //new blue plot (x)
+        let xPlot = CPTScatterPlot(frame: .zero)
         let blueLineStyle = CPTMutableLineStyle()
         blueLineStyle.miterLimit    = 1.0
-        blueLineStyle.lineWidth     = 3.0
+        blueLineStyle.lineWidth     = 1.0
         blueLineStyle.lineColor     = .blue()
-        boundLinePlot.dataLineStyle = blueLineStyle
-        boundLinePlot.identifier    = NSString.init(string: "Blue Plot")
-        boundLinePlot.dataSource    = self
-        newGraph.add(boundLinePlot)
+        xPlot.dataLineStyle = blueLineStyle
+        xPlot.identifier    = NSString.init(string: "xPlot")
+        xPlot.dataSource    = self
+        newGraph.add(xPlot)
         
         // Add plot symbols
         let symbolLineStyle = CPTMutableLineStyle()
@@ -120,20 +125,45 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         let plotSymbol = CPTPlotSymbol.ellipse()
         plotSymbol.fill          = CPTFill(color: .blue())
         plotSymbol.lineStyle     = symbolLineStyle
-        plotSymbol.size          = CGSize(width: 10.0, height: 10.0)
-        boundLinePlot.plotSymbol = plotSymbol
+        plotSymbol.size          = CGSize(width: 1.0, height: 1.0)
+        xPlot.plotSymbol = plotSymbol
         
+        //new blue plot (y)
+        let yPlot = CPTScatterPlot(frame: .zero)
+        let greenLineStyle = CPTMutableLineStyle()
+        greenLineStyle.miterLimit    = 1.0
+        greenLineStyle.lineWidth     = 1.0
+        greenLineStyle.lineColor     = .green()
+        yPlot.dataLineStyle = greenLineStyle
+        yPlot.identifier    = NSString.init(string: "yPlot")
+        yPlot.dataSource    = self
+        newGraph.add(yPlot)
+        
+        // Add plot symbols
+        plotSymbol.fill          = CPTFill(color: .green())
+        plotSymbol.lineStyle     = symbolLineStyle
+        plotSymbol.size          = CGSize(width: 1.0, height: 1.0)
+        yPlot.plotSymbol = plotSymbol
+        
+        //new blue plot (z)
+        let zPlot = CPTScatterPlot(frame: .zero)
+        let yellowLineStyle = CPTMutableLineStyle()
+        yellowLineStyle.miterLimit    = 1.0
+        yellowLineStyle.lineWidth     = 1.0
+        yellowLineStyle.lineColor     = .yellow()
+        zPlot.dataLineStyle = yellowLineStyle
+        zPlot.identifier    = NSString.init(string: "zPlot")
+        zPlot.dataSource    = self
+        newGraph.add(zPlot)
+        
+        // Add plot symbols
+
+        plotSymbol.fill          = CPTFill(color: .yellow())
+        plotSymbol.lineStyle     = symbolLineStyle
+        plotSymbol.size          = CGSize(width: 1.0, height: 1.0)
+        zPlot.plotSymbol = plotSymbol
         
         self.scatterGraph = newGraph
-//        // Add some initial data
-//        var contentArray = [plotDataType]()
-//        for i in 0 ..< 60 {
-//            let x = 1.0 + Double(i) * 0.05
-//            let y = 1.2 * Double(arc4random()) / Double(UInt32.max) + 1.2
-//            let dataPoint: plotDataType = [.X: x, .Y: y]
-//            contentArray.append(dataPoint)
-//        }
-//        self.dataForPlot = contentArray
         
     }
 
@@ -168,13 +198,12 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         else {
             print("Client address:  \(self.client.address)")
             // Send 'start' string for board to start sending data
-            let data = "start"
-            let result = self.client.send(string: data)
-            print("Result: \(result.isSuccess)")
+            _ = self.client.send(string: "start")
+            
             self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) {
-                timerBackground in
-                self.someBackgroundTask(timer: self.timerBackground!)
+                timerBackground in self.someBackgroundTask(timer: self.timerBackground!)
             }
+            
         }
     }
     
@@ -183,11 +212,12 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         //clear data in Plot
         print("Clear graph")
         self.x = 0
+        self.lastX = 0
         self.maxY = 0
         self.contentArray.removeAll()
         self.dataForPlot = self.contentArray
-        self.plotSpace?.yRange = CPTPlotRange(location:-0.2, length: NSNumber(value: 3.0+self.maxY))
-        self.plotSpace?.xRange = CPTPlotRange(location:-0.2, length: NSNumber(value: self.contentArray.count))
+        self.plotSpace?.yRange = CPTPlotRange(location:-7, length:18.0)
+        self.plotSpace?.xRange = CPTPlotRange(location:-10, length:100.0)
         self.scatterGraph?.reloadData()
     }
     
@@ -222,40 +252,37 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     // MARK: - Plot incoming data
     func someBackgroundTask(timer:Timer) {
-        var counter = 0
-        let dataLength = 150
-        //background queueDispatchQoS.background.qosClass
+        print("do some background task")
         DispatchQueue.global(qos: DispatchQoS.default.qosClass).async {
-            print("do some background task")
-            let raw = self.client.recv(dataLength)
-            print("Incoming raw data: \(String(describing: raw))")
+            print("do some background task in async")
+            let raw = self.client.recv(self.dataLength)
+            print("Incoming raw data: \(String(describing: raw.0))")
 
-            for i in 0...dataLength-1 {
+            //this needs to be changed to plot x,y,z acceleration properly
+            for i in 0...self.dataLength-1 {
                 let yValue = Double(raw.0![i])
                 let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
                 if (yValue > self.maxY){self.maxY = yValue}
                 if (yValue < self.minY){self.minY = yValue}
                 self.x = self.x + 1
-                if (i <= 50) {self.contentArray.append(dataPoint)}
-                if (i == 50) {self.x = 0}
-                if (i > 50 && i <= 100){self.yContent.append(dataPoint)}
-                if (i == 100) {self.x = 0}
-                if(i > 100){self.zContent.append(dataPoint)}
+                self.contentArray.append(dataPoint)
             }
-            DispatchQueue.main.async {
-                print("update some UI")
-                self.dataForPlot = self.contentArray
-                self.plotSpace?.yRange = CPTPlotRange(location: NSNumber(value: self.minY), length: NSNumber(value: 2.0+self.maxY))
-                self.plotSpace?.xRange = CPTPlotRange(location: NSNumber(value: counter), length: NSNumber(value: self.contentArray.count))
-                self.scatterGraph?.reloadData()
-            }
+            self.lastX = Int(self.x)
+
         }
-        counter = counter + dataLength
         
+        DispatchQueue.main.async {
+            print("update some UI")
+            self.dataForPlot = self.contentArray
+            self.plotSpace?.yRange = CPTPlotRange(location:-7, length: NSNumber(value: 10.0+self.maxY))
+            self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -80+self.lastX), length: NSNumber(value: self.movingWindowLength))
+            self.scatterGraph?.reloadData()
+        }
+        
+        //self.counter = self.counter + self.dataLength
     }
-    
     // MARK: - Plot Data Source Methods
-    // currently not used!
+    // currently used?
     
     func numberOfRecords(for plot: CPTPlot) -> UInt
     {
@@ -268,7 +295,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         
         if let num = self.dataForPlot[Int(record)][plotField!] {
             let plotID = plot.identifier as! String
-            if (plotField! == .Y) && (plotID == "Green Plot") {
+            if (plotField! == .Y) && (plotID == "yPlot") {
                 return (num + 1.0) as NSNumber
             }
             else {
