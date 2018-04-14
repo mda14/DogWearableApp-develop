@@ -16,7 +16,10 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     private var scatterGraph : CPTXYGraph? = nil
     typealias plotDataType = [CPTScatterPlotField : Double]
-    private var dataForPlot = [plotDataType]()
+    private var dataForPlotX = [plotDataType]()
+    private var dataForPlotY = [plotDataType]()
+    private var dataForPlotZ = [plotDataType]()
+
     var plotSpace: CPTXYPlotSpace?
     
     @IBOutlet weak var hostingView: CPTGraphHostingView!
@@ -28,13 +31,13 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
    // var incoming: IncomingData
     var maxY = 3.0
     var minY = -0.2
-    var x = 0.0
-    var contentArray = [plotDataType]()
+    var X = 0.0
+    var xContent = [plotDataType]()
     var yContent = [plotDataType]()
     var zContent = [plotDataType]()
     
     var counter = 0
-    let dataLength = 152
+    let dataLength = 512
     var rawData : [Byte]?
     
     let movingWindowLength = 80.0
@@ -187,7 +190,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     @IBAction func startUdpConnection(_ sender: Any) {
         //check if user is connected to guderesearch WiFi
         let ssid = self.getWiFiSsid()
-        if (ssid != "guderesearch") {
+        if (ssid != "guderesearch" && ssid != "guderesearch_USB") {
             let alertController = UIAlertController(title: "Wrong WiFi",
                                                     message: "Please connect to 'guderesearch' WiFi",
                                                     preferredStyle: .alert)
@@ -200,7 +203,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             // Send 'start' string for board to start sending data
             _ = self.client.send(string: "start")
             
-            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) {
+            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) {
                 timerBackground in self.someBackgroundTask(timer: self.timerBackground!)
             }
             
@@ -211,11 +214,15 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     @IBAction func clearData(_ sender: Any) {
         //clear data in Plot
         print("Clear graph")
-        self.x = 0
+        self.X = 0
         self.lastX = 0
         self.maxY = 0
-        self.contentArray.removeAll()
-        self.dataForPlot = self.contentArray
+        self.xContent.removeAll()
+        self.yContent.removeAll()
+        self.zContent.removeAll()
+        self.dataForPlotX = self.xContent
+        self.dataForPlotY = self.yContent
+        self.dataForPlotZ = self.zContent
         self.plotSpace?.yRange = CPTPlotRange(location:-7, length:18.0)
         self.plotSpace?.xRange = CPTPlotRange(location:-10, length:100.0)
         self.scatterGraph?.reloadData()
@@ -225,7 +232,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         // stop plotting data
         self.timerBackground?.invalidate()
         print("Stop plotting")
-       // _ = client.send(string: "stop")
+        _ = client.send(string: "stop")
     }
     
     @IBAction func saveData(_ sender: Any) {
@@ -252,60 +259,113 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     // MARK: - Plot incoming data
     func someBackgroundTask(timer:Timer) {
+        var accelData: [Byte] = []; var soundData: [Byte] = []; var x: Double?; var y: Double?; var z: Double?
         print("do some background task")
+
+        
         DispatchQueue.global(qos: DispatchQoS.default.qosClass).async {
             print("do some background task in async")
-            let raw = self.client.recv(self.dataLength)
-            print("Incoming raw data: \(String(describing: raw.0))")
-
-            //this needs to be changed to plot x,y,z acceleration properly
-            for i in 0...self.dataLength-1 {
-                let yValue = Double(raw.0![i])
-                let dataPoint: plotDataType = [.X: self.x , .Y: yValue]
-                if (yValue > self.maxY){self.maxY = yValue}
-                if (yValue < self.minY){self.minY = yValue}
-                self.x = self.x + 1
-                self.contentArray.append(dataPoint)
+            let raw = self.client.recv(512)
+            let printable = raw.0!
+            print("Incoming raw data: \(String(describing: printable))")
+            
+            if (raw.0?.count == self.dataLength){
+                accelData = Array(raw.0![0...5])
+                soundData = Array(raw.0![6...self.dataLength-1])
             }
-            self.lastX = Int(self.x)
+            print("Accel Data only: \(String(describing: accelData[0]))")
+            if (accelData[0] > 99) {
+                x = Double(100 - Double(accelData[0]) - (Double(accelData[1])-100)/100)
+            } else {
+                x = Double(Double(accelData[0]) - 1 + (Double(accelData[1])-100)/100)
+            }
+            if (accelData[2] > 99){
+                y = Double(100 - Double(accelData[2]) - (Double(accelData[3])-100)/100)
+            } else {
+                y = Double(Double(accelData[2]) - 1 + (Double(accelData[3])-100)/100)
+            }
+            if (accelData[4] > 99){
+                z = Double(100 - Double(accelData[4]) - (Double(accelData[5])-100)/100)
+            } else {
+                z = Double(Double(accelData[4]) - 1 + (Double(accelData[5])-100)/100)
+            }
+
+            print("Value of x: \(String(describing: x))")
+            print("Value of y: \(String(describing: y))")
+            print("Value of z: \(String(describing: z))")
+
+            // add x,y,z to accelerometer plot
+            // soundData to another plot
+            let xDataPoint: plotDataType = [.X: self.X, .Y: x!]
+            let yDataPoint: plotDataType = [.X: self.X, .Y: y!]
+            let zDataPoint: plotDataType = [.X: self.X, .Y: z!]
+            if (x! > self.maxY){self.maxY = x!}; if (y! > self.maxY){self.maxY = y!}; if (z! > self.maxY){self.maxY = z!}
+            if (x! < self.minY){self.minY = x!}; if (y! < self.minY){self.minY = y!}; if (z! < self.minY){self.minY = z!}
+            self.X = self.X + 1
+            self.xContent.append(xDataPoint)
+            self.yContent.append(yDataPoint)
+            self.zContent.append(zDataPoint)
+            
+          /*  for i in 0...soundData.count {
+                let dataPoint: plotDataType = [.X: self.X, .Y: Double(soundData[i])]
+                //append dataPoint
+                //do max and min values too
+            }*/
+
 
         }
         
-        DispatchQueue.main.async {
+            DispatchQueue.main.async {
             print("update some UI")
-            self.dataForPlot = self.contentArray
+            self.dataForPlotX = self.xContent
+            self.dataForPlotY = self.yContent
+                self.dataForPlotZ = self.zContent
             self.plotSpace?.yRange = CPTPlotRange(location:-7, length: NSNumber(value: 10.0+self.maxY))
-            self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -80+self.lastX), length: NSNumber(value: self.movingWindowLength))
+            self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -7+self.X), length: NSNumber(value: self.movingWindowLength))
             self.scatterGraph?.reloadData()
-        }
+            }
         
-        //self.counter = self.counter + self.dataLength
     }
+        
     // MARK: - Plot Data Source Methods
-    // currently used?
-    
-    func numberOfRecords(for plot: CPTPlot) -> UInt
-    {
-        return UInt(self.dataForPlot.count)
+    func numberOfRecords(for plot: CPTPlot) -> UInt {
+        return UInt(self.dataForPlotX.count)
     }
     
-    func number(for plot: CPTPlot, field: UInt, record: UInt) -> Any?
+    func number(for plot: CPTPlot, field: UInt, record recordIndex: UInt) -> Any?
     {
         let plotField = CPTScatterPlotField(rawValue: Int(field))
+        let plotID = plot.identifier as! String
         
-        if let num = self.dataForPlot[Int(record)][plotField!] {
-            let plotID = plot.identifier as! String
-            if (plotField! == .Y) && (plotID == "yPlot") {
-                return (num + 1.0) as NSNumber
-            }
-            else {
-                return num as NSNumber
-            }
+        if (plotID == "xPlot") {
+            return self.dataForPlotX[Int(recordIndex)][plotField!] as! NSNumber
+        }
+        if (plotID == "yPlot"){
+            return self.dataForPlotY[Int(recordIndex)][plotField!] as! NSNumber
         }
         else {
-            return nil
+            return self.dataForPlotZ[Int(recordIndex)][plotField!] as! NSNumber
         }
+
     }
+    
+//    func number(for plot: CPTPlot, field: UInt, record: UInt) -> Any?
+//    {
+//        let plotField = CPTScatterPlotField(rawValue: Int(field))
+//
+//        if let num = self.dataForPlot[Int(record)][plotField!] {
+//            let plotID = plot.identifier as! String
+//            if (plotField! == .Y) && (plotID == "yPlot") {
+//                return (num + 1.0) as NSNumber
+//            }
+//            else {
+//                return num as NSNumber
+//            }
+//        }
+//        else {
+//            return nil
+//        }
+//    }
     
     // MARK: - Checking SSID of correct connection
     
