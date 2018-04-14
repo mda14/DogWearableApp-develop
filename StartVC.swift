@@ -41,6 +41,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var rawData : [Byte]?
     
     let movingWindowLength = 80.0
+    var xCounter = 0
     var lastX = 0
     
     // Create UDP socket that connects to address and port of ESP32 board
@@ -203,7 +204,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             // Send 'start' string for board to start sending data
             _ = self.client.send(string: "start")
             
-            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) {
+            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
                 timerBackground in self.someBackgroundTask(timer: self.timerBackground!)
             }
             
@@ -215,7 +216,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         //clear data in Plot
         print("Clear graph")
         self.X = 0
-        self.lastX = 0
+        self.xCounter = 0
         self.maxY = 0
         self.xContent.removeAll()
         self.yContent.removeAll()
@@ -273,7 +274,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 accelData = Array(raw.0![0...5])
                 soundData = Array(raw.0![6...self.dataLength-1])
             }
-            print("Accel Data only: \(String(describing: accelData[0]))")
+            
             if (accelData[0] > 99) {
                 x = Double(100 - Double(accelData[0]) - (Double(accelData[1])-100)/100)
             } else {
@@ -295,7 +296,6 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             print("Value of z: \(String(describing: z))")
 
             // add x,y,z to accelerometer plot
-            // soundData to another plot
             let xDataPoint: plotDataType = [.X: self.X, .Y: x!]
             let yDataPoint: plotDataType = [.X: self.X, .Y: y!]
             let zDataPoint: plotDataType = [.X: self.X, .Y: z!]
@@ -306,6 +306,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             self.yContent.append(yDataPoint)
             self.zContent.append(zDataPoint)
             
+            // soundData to another plot
           /*  for i in 0...soundData.count {
                 let dataPoint: plotDataType = [.X: self.X, .Y: Double(soundData[i])]
                 //append dataPoint
@@ -317,12 +318,18 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         
             DispatchQueue.main.async {
             print("update some UI")
-            self.dataForPlotX = self.xContent
-            self.dataForPlotY = self.yContent
+                self.dataForPlotX = self.xContent
+                self.dataForPlotY = self.yContent
                 self.dataForPlotZ = self.zContent
-            self.plotSpace?.yRange = CPTPlotRange(location:-7, length: NSNumber(value: 10.0+self.maxY))
-            self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -7+self.X), length: NSNumber(value: self.movingWindowLength))
-            self.scatterGraph?.reloadData()
+                self.plotSpace?.yRange = CPTPlotRange(location:NSNumber(value: self.minY-3), length: NSNumber(value: 5+self.maxY+abs(self.minY)))
+                if (self.X < 70) {
+                    self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -7), length: NSNumber(value: self.movingWindowLength))
+                } else {
+                    
+                    self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -7+self.xCounter), length: NSNumber(value: self.movingWindowLength))
+                    self.xCounter = self.xCounter + 1
+                }
+                self.scatterGraph?.reloadData()
             }
         
     }
@@ -338,13 +345,13 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         let plotID = plot.identifier as! String
         
         if (plotID == "xPlot") {
-            return self.dataForPlotX[Int(recordIndex)][plotField!] as! NSNumber
+            return self.dataForPlotX[Int(recordIndex)][plotField!]! as NSNumber
         }
         if (plotID == "yPlot"){
-            return self.dataForPlotY[Int(recordIndex)][plotField!] as! NSNumber
+            return self.dataForPlotY[Int(recordIndex)][plotField!]! as NSNumber
         }
         else {
-            return self.dataForPlotZ[Int(recordIndex)][plotField!] as! NSNumber
+            return self.dataForPlotZ[Int(recordIndex)][plotField!]! as NSNumber
         }
 
     }
