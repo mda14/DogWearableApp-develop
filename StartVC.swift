@@ -13,22 +13,26 @@ import CorePlot
 import SystemConfiguration.CaptiveNetwork
 
 class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable  {
-    
+    // variables for graphs
     private var scatterGraph : CPTXYGraph? = nil
+    private var scatterGraphSound : CPTXYGraph? = nil
     typealias plotDataType = [CPTScatterPlotField : Double]
     private var dataForPlotX = [plotDataType]()
     private var dataForPlotY = [plotDataType]()
     private var dataForPlotZ = [plotDataType]()
+    private var dataForPlotSound = [plotDataType]()
 
     var plotSpace: CPTXYPlotSpace?
+    var plotSpaceSound: CPTXYPlotSpace?
     
     @IBOutlet weak var hostingView: CPTGraphHostingView!
+    @IBOutlet weak var hostingViewSound: CPTGraphHostingView!
     
     var response: AWSCognitoIdentityUserGetDetailsResponse?
     var user: AWSCognitoIdentityUser?
     var pool: AWSCognitoIdentityUserPool?
     
-   // var incoming: IncomingData
+   // variables for plotting
     var maxY = 3.0
     var minY = -0.2
     var X = 0.0
@@ -36,13 +40,15 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var yContent = [plotDataType]()
     var zContent = [plotDataType]()
     
-    var counter = 0
+    var maxYsound = 50.0
+    var minYsound = -2.0
+    var soundContent = [plotDataType]()
+    
     let dataLength = 512
     var rawData : [Byte]?
-    
     let movingWindowLength = 80.0
     var xCounter = 0
-    var lastX = 0
+    var xCounterSound = 0
     
     // Create UDP socket that connects to address and port of ESP32 board
     let client = UDPClient(address: "192.168.4.1", port: 3333)
@@ -58,34 +64,43 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             self.user = self.pool?.currentUser()
         }
         self.refresh()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
-    // MARK: Initialization
+    // MARK: Initialization of graphs area
     
     override func viewDidAppear(_ animated : Bool)
     {
         super.viewDidAppear(animated)
         
-        // Create graph from theme
+        // Create graph from theme - accelerometer
         let newGraph = CPTXYGraph(frame: .zero)
         newGraph.apply(CPTTheme(named: .darkGradientTheme))
+        // Create graph for soundData
+        let newGraphSound = CPTXYGraph(frame: .zero)
+        newGraphSound.apply(CPTTheme(named: .darkGradientTheme))
         
         hostingView.hostedGraph = newGraph
+        hostingViewSound.hostedGraph = newGraphSound
         
         // Paddings
-        newGraph.paddingLeft   = 0.1
-        newGraph.paddingRight  = 0.1
-        newGraph.paddingTop    = 0.1
-        newGraph.paddingBottom = 0.1
+        newGraph.paddingLeft   = 0.1; newGraphSound.paddingLeft = 0.1
+        newGraph.paddingRight  = 0.1; newGraphSound.paddingRight = 0.1
+        newGraph.paddingTop    = 0.1; newGraphSound.paddingTop = 0.1
+        newGraph.paddingBottom = 0.1; newGraphSound.paddingBottom = 0.1
         
-        // Plot space
+        // Plot space for accelerometer
         self.plotSpace = newGraph.defaultPlotSpace as? CPTXYPlotSpace
         self.plotSpace?.allowsUserInteraction = true
         self.plotSpace?.yRange = CPTPlotRange(location:-7, length:18.0)
         self.plotSpace?.xRange = CPTPlotRange(location:-10, length: NSNumber(value: movingWindowLength))
         
-        // Axes
+        // Plot space for sound graph
+        self.plotSpaceSound = newGraphSound.defaultPlotSpace as? CPTXYPlotSpace
+        self.plotSpaceSound?.allowsUserInteraction = true
+        self.plotSpaceSound?.yRange = CPTPlotRange(location:-7, length:18)
+        self.plotSpaceSound?.xRange = CPTPlotRange(location:-10, length: 80)
+        
+        // Axes for accelerometer
         let axisSet = newGraph.axisSet as! CPTXYAxisSet
         
         if let x = axisSet.xAxis {
@@ -97,7 +112,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
 //                CPTPlotRange(location: 1.99, length: 0.02),
 //                CPTPlotRange(location: 2.99, length: 0.02)
 //            ]
-            x.delegate = self //this line was missing before
+            x.delegate = self
         }
         
         if let y = axisSet.yAxis {
@@ -112,6 +127,33 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             y.delegate = self
         }
         
+        // Axes for sound plot
+        let axisSetSound = newGraphSound.axisSet as! CPTXYAxisSet
+        
+        if let x = axisSetSound.xAxis {
+            x.majorIntervalLength   = 100
+            x.orthogonalPosition    = 0
+            x.minorTicksPerInterval = 1
+            //            x.labelExclusionRanges  = [
+            //                CPTPlotRange(location: 0.99, length: 0.02),
+            //                CPTPlotRange(location: 1.99, length: 0.02),
+            //                CPTPlotRange(location: 2.99, length: 0.02)
+            //            ]
+            x.delegate = self
+        }
+        
+        if let y = axisSetSound.yAxis {
+            y.majorIntervalLength   = 100
+            y.minorTicksPerInterval = 1
+            y.orthogonalPosition    = 0
+            //            y.labelExclusionRanges  = [
+            //                CPTPlotRange(location: 0.99, length: 0.02),
+            //                CPTPlotRange(location: 1.99, length: 0.02),
+            //                CPTPlotRange(location: 3.99, length: 0.02)
+            //            ]
+            y.delegate = self
+        }
+        
         //new blue plot (x)
         let xPlot = CPTScatterPlot(frame: .zero)
         let blueLineStyle = CPTMutableLineStyle()
@@ -122,7 +164,6 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         xPlot.identifier    = NSString.init(string: "xPlot")
         xPlot.dataSource    = self
         newGraph.add(xPlot)
-        
         // Add plot symbols
         let symbolLineStyle = CPTMutableLineStyle()
         symbolLineStyle.lineColor = .black()
@@ -142,7 +183,6 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         yPlot.identifier    = NSString.init(string: "yPlot")
         yPlot.dataSource    = self
         newGraph.add(yPlot)
-        
         // Add plot symbols
         plotSymbol.fill          = CPTFill(color: .green())
         plotSymbol.lineStyle     = symbolLineStyle
@@ -159,15 +199,30 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         zPlot.identifier    = NSString.init(string: "zPlot")
         zPlot.dataSource    = self
         newGraph.add(zPlot)
-        
         // Add plot symbols
-
         plotSymbol.fill          = CPTFill(color: .yellow())
         plotSymbol.lineStyle     = symbolLineStyle
         plotSymbol.size          = CGSize(width: 1.0, height: 1.0)
         zPlot.plotSymbol = plotSymbol
         
+        //sound plot
+        let soundPlot = CPTScatterPlot(frame: .zero)
+        let soundLineStyle = CPTMutableLineStyle()
+        soundLineStyle.miterLimit    = 1.0
+        soundLineStyle.lineWidth     = 1.0
+        soundLineStyle.lineColor     = .white()
+        soundPlot.dataLineStyle = soundLineStyle
+        soundPlot.identifier    = NSString.init(string: "soundPlot")
+        soundPlot.dataSource    = self
+        newGraphSound.add(soundPlot)
+        // Add plot symbols
+        plotSymbol.fill          = CPTFill(color: .yellow())
+        plotSymbol.lineStyle     = symbolLineStyle
+        plotSymbol.size          = CGSize(width: 1.0, height: 1.0)
+        soundPlot.plotSymbol = plotSymbol
+        
         self.scatterGraph = newGraph
+        self.scatterGraphSound = newGraphSound
         
     }
 
@@ -204,7 +259,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             // Send 'start' string for board to start sending data
             _ = self.client.send(string: "start")
             
-            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
+            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.066, repeats: true) {
                 timerBackground in self.someBackgroundTask(timer: self.timerBackground!)
             }
             
@@ -218,22 +273,36 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         self.X = 0
         self.xCounter = 0
         self.maxY = 0
+        self.minY = -2
+        self.maxYsound = 0
+        self.minYsound = -2
+        self.xCounterSound = 0
+        
         self.xContent.removeAll()
         self.yContent.removeAll()
         self.zContent.removeAll()
+        self.soundContent.removeAll()
+        
         self.dataForPlotX = self.xContent
         self.dataForPlotY = self.yContent
         self.dataForPlotZ = self.zContent
+        self.dataForPlotSound = self.soundContent
+        
         self.plotSpace?.yRange = CPTPlotRange(location:-7, length:18.0)
         self.plotSpace?.xRange = CPTPlotRange(location:-10, length:100.0)
+        
+        self.plotSpaceSound?.yRange = CPTPlotRange(location:-7, length:180.0)
+        self.plotSpaceSound?.xRange = CPTPlotRange(location:-10, length: 500)
+        
         self.scatterGraph?.reloadData()
+        self.scatterGraphSound?.reloadData()
     }
     
     @IBAction func stopPlotting(_ sender: Any) {
         // stop plotting data
+        _ = client.send(string: "stop")
         self.timerBackground?.invalidate()
         print("Stop plotting")
-        _ = client.send(string: "stop")
     }
     
     @IBAction func saveData(_ sender: Any) {
@@ -267,8 +336,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         DispatchQueue.global(qos: DispatchQoS.default.qosClass).async {
             print("do some background task in async")
             let raw = self.client.recv(512)
-            let printable = raw.0!
-            print("Incoming raw data: \(String(describing: printable))")
+//            print("Incoming raw data: \(String(describing: raw.0!))")
             
             if (raw.0?.count == self.dataLength){
                 accelData = Array(raw.0![0...5])
@@ -291,9 +359,9 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 z = Double(Double(accelData[4]) - 1 + (Double(accelData[5])-100)/100)
             }
 
-            print("Value of x: \(String(describing: x))")
-            print("Value of y: \(String(describing: y))")
-            print("Value of z: \(String(describing: z))")
+//            print("Value of x: \(String(describing: x))")
+//            print("Value of y: \(String(describing: y))")
+//            print("Value of z: \(String(describing: z))")
 
             // add x,y,z to accelerometer plot
             let xDataPoint: plotDataType = [.X: self.X, .Y: x!]
@@ -306,18 +374,31 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             self.yContent.append(yDataPoint)
             self.zContent.append(zDataPoint)
             
-            // soundData to another plot
-          /*  for i in 0...soundData.count {
-                let dataPoint: plotDataType = [.X: self.X, .Y: Double(soundData[i])]
-                //append dataPoint
-                //do max and min values too
-            }*/
+            
+            
+            // add soundData to another plot
+            var sum = 0.0
+            var i = 0
+            while(i<506) {
+                for j in 0...22 {
+                    sum = Double(soundData[i+j]) + sum
+                }
+                let point = sum/23
+                let soundDataPoint: plotDataType = [.X: Double(self.soundContent.count), .Y: point]
+                self.soundContent.append(soundDataPoint)
+                //do max and min values
+                if (point > self.maxYsound) { self.maxYsound = point }
+                if (point < self.minYsound) { self.minYsound = point }
+                i = i+23
+                sum = 0
+            }
 
 
         }
         
             DispatchQueue.main.async {
             print("update some UI")
+                // update accelerometer plot
                 self.dataForPlotX = self.xContent
                 self.dataForPlotY = self.yContent
                 self.dataForPlotZ = self.zContent
@@ -326,53 +407,58 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                     self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -7), length: NSNumber(value: self.movingWindowLength))
                 } else {
                     
-                    self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -7+self.xCounter), length: NSNumber(value: self.movingWindowLength))
+                    self.plotSpace?.xRange = CPTPlotRange(location:NSNumber(value: -5+self.xCounter), length: NSNumber(value: self.movingWindowLength))
                     self.xCounter = self.xCounter + 1
                 }
                 self.scatterGraph?.reloadData()
+                
+                // update sound plot
+                self.dataForPlotSound = self.soundContent
+                self.plotSpaceSound?.yRange = CPTPlotRange(location: NSNumber(value: self.minYsound-10), length: NSNumber(value: 20+self.maxYsound+abs(self.minYsound)))
+                self.plotSpaceSound?.xRange = CPTPlotRange(location: NSNumber(value: self.xCounterSound-100), length: NSNumber(value: self.movingWindowLength))
+                self.scatterGraphSound?.reloadData()
+                self.xCounterSound = self.xCounterSound + 21
             }
         
     }
         
     // MARK: - Plot Data Source Methods
     func numberOfRecords(for plot: CPTPlot) -> UInt {
-        return UInt(self.dataForPlotX.count)
+        let plotID = plot.identifier as! String
+        if (plotID == "xPlot") {
+            return UInt(self.dataForPlotX.count)
+        }
+        if (plotID == "yPlot") {
+            return UInt(self.dataForPlotY.count)
+        }
+        if (plotID == "zPlot") {
+            return UInt(self.dataForPlotZ.count)
+        }
+        else {
+            return UInt(self.dataForPlotSound.count)
+        }
+        
     }
     
-    func number(for plot: CPTPlot, field: UInt, record recordIndex: UInt) -> Any?
+    func number(for plot: CPTPlot, field: UInt, record: UInt) -> Any?
     {
         let plotField = CPTScatterPlotField(rawValue: Int(field))
         let plotID = plot.identifier as! String
         
         if (plotID == "xPlot") {
-            return self.dataForPlotX[Int(recordIndex)][plotField!]! as NSNumber
+            return self.dataForPlotX[Int(record)][plotField!]! as NSNumber
         }
-        if (plotID == "yPlot"){
-            return self.dataForPlotY[Int(recordIndex)][plotField!]! as NSNumber
+        if (plotID == "yPlot") {
+            return self.dataForPlotY[Int(record)][plotField!]! as NSNumber
+        }
+        if (plotID == "zPlot") {
+            return self.dataForPlotZ[Int(record)][plotField!]! as NSNumber
         }
         else {
-            return self.dataForPlotZ[Int(recordIndex)][plotField!]! as NSNumber
+            return self.dataForPlotSound[Int(record)][plotField!]! as NSNumber
         }
 
     }
-    
-//    func number(for plot: CPTPlot, field: UInt, record: UInt) -> Any?
-//    {
-//        let plotField = CPTScatterPlotField(rawValue: Int(field))
-//
-//        if let num = self.dataForPlot[Int(record)][plotField!] {
-//            let plotID = plot.identifier as! String
-//            if (plotField! == .Y) && (plotID == "yPlot") {
-//                return (num + 1.0) as NSNumber
-//            }
-//            else {
-//                return num as NSNumber
-//            }
-//        }
-//        else {
-//            return nil
-//        }
-//    }
     
     // MARK: - Checking SSID of correct connection
     
