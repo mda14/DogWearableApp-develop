@@ -20,6 +20,7 @@
 		2B0A58F01FB4B375005D49B9 /* DogWearableAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0A58EF1FB4B375005D49B9 /* DogWearableAppUITests.swift */; };
 		2B210059202A089C00C9ED9C /* SignUpConfirmVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B210058202A089C00C9ED9C /* SignUpConfirmVC.swift */; };
 		2B21005D202A349800C9ED9C /* ConfirmForgotPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B21005C202A349800C9ED9C /* ConfirmForgotPasswordVC.swift */; };
+		2B7E4EF520CE865400B34311 /* DogBehaviour.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B7E4EF420CE865400B34311 /* DogBehaviour.mlmodel */; };
 		2B98F2E22028A7DC002D795A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98F2E12028A7DC002D795A /* Constants.swift */; };
 		2B98F2E82028AABE002D795A /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98F2E72028AABE002D795A /* LoginVC.swift */; };
 		2BA65A552029E94C000DAA0B /* SignUpVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA65A542029E94C000DAA0B /* SignUpVC.swift */; };
@@ -65,6 +66,7 @@
 		2B0A58F11FB4B375005D49B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2B210058202A089C00C9ED9C /* SignUpConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpConfirmVC.swift; sourceTree = "<group>"; };
 		2B21005C202A349800C9ED9C /* ConfirmForgotPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmForgotPasswordVC.swift; sourceTree = "<group>"; };
+		2B7E4EF420CE865400B34311 /* DogBehaviour.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = DogBehaviour.mlmodel; path = ../../../../../ML/final_ML/DogBehaviour.mlmodel; sourceTree = "<group>"; };
 		2B98F2E12028A7DC002D795A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		2B98F2E72028AABE002D795A /* LoginVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		2BA65A542029E94C000DAA0B /* SignUpVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpVC.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 		2B98F2E52028A955002D795A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				2B7E4EF420CE865400B34311 /* DogBehaviour.mlmodel */,
 				2B98F2E12028A7DC002D795A /* Constants.swift */,
 				2BDA6D10202CA73A00ABF5EF /* IncomingData.swift */,
 			);
@@ -528,6 +531,7 @@
 				2B0A58D01FB4B374005D49B9 /* AppDelegate.swift in Sources */,
 				2B210059202A089C00C9ED9C /* SignUpConfirmVC.swift in Sources */,
 				2B08DC6F1FE3E97F00991F82 /* StartVC.swift in Sources */,
+				2B7E4EF520CE865400B34311 /* DogBehaviour.mlmodel in Sources */,
 				2B21005D202A349800C9ED9C /* ConfirmForgotPasswordVC.swift in Sources */,
 				2BA65A572029E967000DAA0B /* ForgotPasswordVC.swift in Sources */,
 				2B98F2E22028A7DC002D795A /* Constants.swift in Sources */,

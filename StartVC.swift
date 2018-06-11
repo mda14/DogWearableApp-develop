@@ -306,7 +306,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     }
     
     @IBAction func saveData(_ sender: Any) {
-        // save current plot into user data
+        // save current plot into user data to AWS
     }
     
     @IBAction func signOut(_ sender: Any) {
@@ -359,9 +359,6 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 z = Double(Double(accelData[4]) - 1 + (Double(accelData[5])-100)/100)
             }
 
-//            print("Value of x: \(String(describing: x))")
-//            print("Value of y: \(String(describing: y))")
-//            print("Value of z: \(String(describing: z))")
 
             // add x,y,z to accelerometer plot
             let xDataPoint: plotDataType = [.X: self.X, .Y: x!]
