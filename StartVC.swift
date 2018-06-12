@@ -29,6 +29,9 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     @IBOutlet weak var hostingViewSound: CPTGraphHostingView!
     
     @IBOutlet weak var predictedLabel: UITextField!
+    
+    @IBOutlet weak var predictedScore: UITextField!
+    
     var response: AWSCognitoIdentityUserGetDetailsResponse?
     var user: AWSCognitoIdentityUser?
     var pool: AWSCognitoIdentityUserPool?
@@ -263,20 +266,35 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             let alertController = UIAlertController(title: "Wrong WiFi",
                                                     message: "Please connect to 'guderesearch' WiFi",
                                                     preferredStyle: .alert)
+            // ok action to dismiss message
             let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            // settings action to send user to device settings
+            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+                guard let settingsUrl = URL(string: "App-Prefs:root=WIFI") else {
+                    return
+                }
+                
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                        // Checking for setting is opened or not
+                        print("Setting is opened: \(success)")
+                    })
+                }
+            }
             alertController.addAction(okAction)
+            alertController.addAction(settingsAction)
             self.present(alertController, animated: true, completion:  nil)
         }
         else {
             print("Client address:  \(self.client.address)")
             // Send 'start' string for board to start sending data
             _ = self.client.send(string: "start")
-            // 0.066 works
+            // timeInterval = 0.066 works
             self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.066, repeats: true) {
                 timerBackground in let (x_temp, y_temp, z_temp) = self.someBackgroundTask(timer: self.timerBackground!)
                 self.x_buffer.append(x_temp); self.y_buffer.append(y_temp); self.z_buffer.append(z_temp)
-                print(x_temp, y_temp, z_temp)
-                print("Size of buffer:", self.x_buffer.count)
+                //print(x_temp, y_temp, z_temp)
+                //print("Size of buffer:", self.x_buffer.count)
                 if(self.x_buffer.count == self.n) {
                     let output = self.accelerationPrediction(x: self.x_buffer, y: self.y_buffer, z: self.z_buffer)
                     print("done accelerationPrediction")
