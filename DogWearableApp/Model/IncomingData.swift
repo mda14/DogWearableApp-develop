@@ -10,15 +10,15 @@ import Foundation
 import Accelerate
 import Surge
 
-public func featureExtraction(x: [Double], y: [Double], z: [Double]) -> (Double, Double, Double, Double?, Double?, Double, Double, Double, Double?, Double?, Double, Double, Double, Double?, Double?, Double, Double, Double, Double, Double, Double, Double, Double, Double?, Double, Double, Double, Double, Double, Double?, Double, Double, Double, Double, Double, Double?, Double, Double, Double, Double, Double, Double, Double, Double, Double) {
+public func featureExtraction(x: [Double], y: [Double], z: [Double]) -> (Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double) {
     // calculate mean, std and skew
     let mean_x = average(nums: x); let std_x = standardDeviation(arr: x); let skew_x = skew(x);
     let mean_y = average(nums: y); let std_y = standardDeviation(arr: y); let skew_y = skew(y);
     let mean_z = average(nums: z); let std_z = standardDeviation(arr: z); let skew_z = skew(z);
     // calculate max and min
-    let max_x = x.max(); let min_x = x.min();
-    let max_y = y.max(); let min_y = y.min();
-    let max_z = z.max(); let min_z = z.min();
+    let max_x = my_max(input: x); let min_x = my_min(input: x);
+    let max_y = my_max(input: y); let min_y = my_min(input: y);
+    let max_z = my_max(input: z); let min_z = my_min(input: z);
     // calculate directions x/z y/z x/y
     var x_z = 0.0; if(mean_z != 0) {x_z = mean_x/mean_z;}
     var y_z = 0.0; if(mean_z != 0) {y_z = mean_y/mean_z;}
@@ -30,9 +30,9 @@ public func featureExtraction(x: [Double], y: [Double], z: [Double]) -> (Double,
     let fft_mean_z = average(nums: fft_z); let fft_std_z = standardDeviation(arr: fft_z); let fft_skew_z = skew(fft_z);
     // calculate max, min and 2nd max
     var fft_x2 = fft_x.sorted(); var fft_y2 = fft_y.sorted(); var fft_z2 = fft_z.sorted()
-    let fft_max_x = fft_x2[0]; let fft_min_x = fft_x.min(); let fft_2max_x = fft_x2[1]
-    let fft_max_y = fft_y2[0]; let fft_min_y = fft_y.min(); let fft_2max_y = fft_y2[1]
-    let fft_max_z = fft_z2[0]; let fft_min_z = fft_z.min(); let fft_2max_z = fft_z2[1]
+    let fft_max_x = fft_x2[0]; let fft_min_x = my_min(input: fft_x); let fft_2max_x = fft_x2[1]
+    let fft_max_y = fft_y2[0]; let fft_min_y = my_min(input: fft_y); let fft_2max_y = fft_y2[1]
+    let fft_max_z = fft_z2[0]; let fft_min_z = my_min(input: fft_z); let fft_2max_z = fft_z2[1]
     // calculate mean, max and 2nd max of psd
     var psd_x = my_psd(fft_x).sorted(); var psd_y = my_psd(fft_x).sorted(); var psd_z = my_psd(fft_x).sorted();
     let psd_mean_x = average(nums: psd_x); let psd_max_x = psd_x[0]; let psd_2max_x = psd_x[1]
@@ -48,6 +48,15 @@ public func featureExtraction(x: [Double], y: [Double], z: [Double]) -> (Double,
             psd_mean_z,psd_max_z,psd_2max_z)
     
     
+}
+func my_max(input: [Double]) -> Double {
+    guard let output = input.max() else {return 0.0}
+    return output
+}
+
+func my_min(input: [Double]) -> Double {
+    guard let output = input.min() else {return 0.0}
+    return output
 }
 
 func average(nums: [Double]) -> Double {

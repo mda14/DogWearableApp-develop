@@ -27,6 +27,7 @@
 		2BA65A572029E967000DAA0B /* ForgotPasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA65A562029E967000DAA0B /* ForgotPasswordVC.swift */; };
 		2BA9E5521FE9763800F1CB12 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */; };
 		2BDA6D11202CA73A00ABF5EF /* IncomingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BDA6D10202CA73A00ABF5EF /* IncomingData.swift */; };
+		2BE8EC5220D0221F00BEDE52 /* DogBehaviourForest.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8EC5120D0221F00BEDE52 /* DogBehaviourForest.mlmodel */; };
 		41CB0AF8EDAA7A95B37467C1 /* Pods_DogWearableAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F438CEA5304FEF3E2AF5778B /* Pods_DogWearableAppUITests.framework */; };
 		E0FD7A580A2510F11198E684 /* Pods_DogWearableAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A056318872C3B54CD9D86625 /* Pods_DogWearableAppTests.framework */; };
 		FA0453054E65EE25826AA08A /* Pods_DogWearableApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7318347C21A536DC22590AEE /* Pods_DogWearableApp.framework */; };
@@ -73,6 +74,7 @@
 		2BA65A562029E967000DAA0B /* ForgotPasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordVC.swift; sourceTree = "<group>"; };
 		2BA9E5511FE9763800F1CB12 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		2BDA6D10202CA73A00ABF5EF /* IncomingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomingData.swift; sourceTree = "<group>"; };
+		2BE8EC5120D0221F00BEDE52 /* DogBehaviourForest.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DogBehaviourForest.mlmodel; sourceTree = "<group>"; };
 		67A1B6099FC8E00A9F0F21E8 /* Pods-DogWearableAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DogWearableAppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DogWearableAppTests/Pods-DogWearableAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7318347C21A536DC22590AEE /* Pods_DogWearableApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DogWearableApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		782CD9CEE55A60D212D0A512 /* Pods-DogWearableApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DogWearableApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-DogWearableApp/Pods-DogWearableApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				2B7E4EF420CE865400B34311 /* DogBehaviour.mlmodel */,
+				2BE8EC5120D0221F00BEDE52 /* DogBehaviourForest.mlmodel */,
 				2B98F2E12028A7DC002D795A /* Constants.swift */,
 				2BDA6D10202CA73A00ABF5EF /* IncomingData.swift */,
 			);
@@ -536,6 +539,7 @@
 				2B7E4EF520CE865400B34311 /* DogBehaviour.mlmodel in Sources */,
 				2B21005D202A349800C9ED9C /* ConfirmForgotPasswordVC.swift in Sources */,
 				2BA65A572029E967000DAA0B /* ForgotPasswordVC.swift in Sources */,
+				2BE8EC5220D0221F00BEDE52 /* DogBehaviourForest.mlmodel in Sources */,
 				2B98F2E22028A7DC002D795A /* Constants.swift in Sources */,
 				2BA65A552029E94C000DAA0B /* SignUpVC.swift in Sources */,
 				2B98F2E82028AABE002D795A /* LoginVC.swift in Sources */,

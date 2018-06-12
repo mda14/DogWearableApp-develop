@@ -12,7 +12,7 @@ import AWSCognitoIdentityProvider
 import CorePlot
 import SystemConfiguration.CaptiveNetwork
 
-class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable  {
+class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable {
     // variables for graphs
     private var scatterGraph : CPTXYGraph? = nil
     private var scatterGraphSound : CPTXYGraph? = nil
@@ -298,8 +298,10 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 if(self.x_buffer.count == self.n) {
                     let output = self.accelerationPrediction(x: self.x_buffer, y: self.y_buffer, z: self.z_buffer)
                     print("done accelerationPrediction")
-                    let text = "Predicted: " + String(output)
+                    let text = "Predicted: " + String(output.0)
+                    let score = String(format:"%.1f", output.1!)
                     self.predictedLabel.text = text
+                    self.predictedScore.text = score
                     self.x_buffer.removeAll(); self.y_buffer.removeAll(); self.z_buffer.removeAll()
                 }
             }
@@ -470,8 +472,8 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     }
     
     // function to predict dog behaviour from accelerometer data
-    func accelerationPrediction (x: [Double], y: [Double], z: [Double]) -> String {
-        var output = DogBehaviourOutput(label: 0)
+    func accelerationPrediction (x: [Double], y: [Double], z: [Double]) -> (String, Double?) {
+        var output = DogBehaviourForestOutput(classLabel: 0, classProbability: [0: 0.0])
         // perform feature extraction
         let (mean_x,std_x,skew_x,max_x,min_x, mean_y,std_y,skew_y,max_y,min_y,mean_z,std_z,skew_z,max_z,min_z,x_z,y_z,x_y,
         fft_mean_x,fft_std_x,fft_skew_x,fft_max_x,fft_2max_x,fft_min_x,
@@ -480,16 +482,16 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         psd_mean_x,psd_max_x,psd_2max_x,
         psd_mean_y,psd_max_y,psd_2max_y,
         psd_mean_z,psd_max_z,psd_2max_z) = featureExtraction(x: x, y: y, z: z)
-        let mlmodel = DogBehaviour()
+        let mlmodel = DogBehaviourForest()
  
         do {
-            output = try mlmodel.prediction(mean_x: mean_x, std_x: std_x, skew_x: skew_x, max_x: max_x!, min_x: min_x!, mean_y: mean_y, std_y: std_y, skew_y: skew_y, max_y: max_y!, min_y: min_y!, mean_z: mean_z, std_z: std_z, skew_z: skew_z, max_z: max_z!, min_z: min_z!, x_z: x_z, y_z: y_z, x_y: x_y, fft_mean_x: fft_mean_x, fft_std_x: fft_std_x, fft_skew_x: fft_skew_x, fft_max_x: fft_max_x, fft_2max_x: fft_2max_x, fft_min_x: fft_min_x!, fft_mean_y: fft_mean_y, fft_std_y: fft_std_y, fft_skew_y: fft_skew_y, fft_max_y: fft_max_y, fft_2max_y: fft_2max_y, fft_min_y: fft_min_y!, fft_mean_z: fft_mean_z, fft_std_z: fft_std_z, fft_skew_z: fft_skew_z, fft_max_z: fft_max_z, fft_2max_z: fft_2max_z, fft_min_z: fft_min_z!, psd_mean_x: psd_mean_x, psd_max_x: psd_max_x, psd_2max_x: psd_2max_x, psd_mean_y: psd_mean_y, psd_max_y: psd_max_y, psd_2max_y: psd_2max_y, psd_mean_z: psd_mean_z, psd_max_z: psd_max_z, psd_2max_z: psd_2max_z)
+            output = try mlmodel.prediction(mean_x: mean_x, std_x: std_x, skew_x: skew_x, max_x: max_x, min_x: min_x, mean_y: mean_y, std_y: std_y, skew_y: skew_y, max_y: max_y, min_y: min_y, mean_z: mean_z, std_z: std_z, skew_z: skew_z, max_z: max_z, min_z: min_z, x_z: x_z, y_z: y_z, x_y: x_y, fft_mean_x: fft_mean_x, fft_std_x: fft_std_x, fft_skew_x: fft_skew_x, fft_max_x: fft_max_x, fft_2max_x: fft_2max_x, fft_min_x: fft_min_x, fft_mean_y: fft_mean_y, fft_std_y: fft_std_y, fft_skew_y: fft_skew_y, fft_max_y: fft_max_y, fft_2max_y: fft_2max_y, fft_min_y: fft_min_y, fft_mean_z: fft_mean_z, fft_std_z: fft_std_z, fft_skew_z: fft_skew_z, fft_max_z: fft_max_z, fft_2max_z: fft_2max_z, fft_min_z: fft_min_z, psd_mean_x: psd_mean_x, psd_max_x: psd_max_x, psd_2max_x: psd_2max_x, psd_mean_y: psd_mean_y, psd_max_y: psd_max_y, psd_2max_y: psd_2max_y, psd_mean_z: psd_mean_z, psd_max_z: psd_max_z, psd_2max_z: psd_2max_z)
         }
             catch {
             print("Error when mlmodel prediction")
         }
-        var label = ""
-        switch output.label {
+        var label = ""; let probability = output.classProbability[output.classLabel]
+        switch output.classLabel {
         case 1:
             label = "Down"
         case 2:
@@ -501,7 +503,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         default:
             label = "Unknown"
         }
-        return label
+        return (label, probability!)
     }
         
     // MARK: - Plot Data Source Methods
@@ -595,9 +597,11 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     }
 }
 
+
 protocol Rotatable: AnyObject {
     func resetToPortrait()
 }
+
 extension Rotatable where Self: UIViewController {
     func resetToPortrait() {
         UIDevice.current.setValue(Int(UIInterfaceOrientation.portrait.rawValue), forKey: "orientation")
