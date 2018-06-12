@@ -9,6 +9,7 @@ target 'DogWearableApp' do
     pod 'AWSCognitoIdentityProvider'
     pod 'AWSCore'
     pod 'CorePlot'
+    pod 'Surge'
     
   # Pods for DogWearableApp
 
@@ -23,3 +24,4 @@ target 'DogWearableApp' do
   end
 
 end
+

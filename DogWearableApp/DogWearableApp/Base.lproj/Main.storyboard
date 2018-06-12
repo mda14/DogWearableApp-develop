@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BpY-ue-2wY">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BpY-ue-2wY">
     <device id="retina4_7" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
@@ -455,6 +455,12 @@
                                 <rect key="frame" x="20" y="55" width="467" height="145"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Predicted Label" borderStyle="roundedRect" textAlignment="center" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="6q5-Pv-a5J">
+                                <rect key="frame" x="501" y="325" width="152" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="15"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -466,13 +472,16 @@
                             <constraint firstItem="LGo-OY-km7" firstAttribute="leading" secondItem="tZF-D8-bQy" secondAttribute="leadingMargin" id="ILk-vr-PvM"/>
                             <constraint firstItem="0Ri-nB-JIk" firstAttribute="leading" secondItem="tZF-D8-bQy" secondAttribute="leading" id="J98-WH-CRe"/>
                             <constraint firstItem="LGo-OY-km7" firstAttribute="centerY" secondItem="0Ri-nB-JIk" secondAttribute="centerY" constant="78" id="JJJ-GV-PSE"/>
+                            <constraint firstItem="6q5-Pv-a5J" firstAttribute="centerX" secondItem="Mpe-3T-HM8" secondAttribute="centerX" id="Os4-zZ-bOX"/>
                             <constraint firstItem="f3i-x5-0bc" firstAttribute="top" secondItem="sqv-lb-bof" secondAttribute="bottom" constant="30" id="TkI-7d-92c"/>
+                            <constraint firstItem="6q5-Pv-a5J" firstAttribute="bottom" secondItem="LGo-OY-km7" secondAttribute="bottom" id="U6A-Kz-UQl"/>
                             <constraint firstAttribute="trailing" secondItem="0Ri-nB-JIk" secondAttribute="trailing" id="Wsc-aS-MiV"/>
                             <constraint firstItem="6Rq-2h-nUG" firstAttribute="trailing" secondItem="Z3E-bm-s9e" secondAttribute="trailing" constant="43" id="YyQ-zE-VeF"/>
                             <constraint firstItem="6Rq-2h-nUG" firstAttribute="trailing" secondItem="f3i-x5-0bc" secondAttribute="trailing" constant="43" id="anL-OS-HoQ"/>
                             <constraint firstItem="LGo-OY-km7" firstAttribute="top" secondItem="zVa-iK-m8L" secondAttribute="bottom" constant="8" symbolic="YES" id="cHj-iZ-rL6"/>
                             <constraint firstItem="0Ri-nB-JIk" firstAttribute="bottom" secondItem="6Rq-2h-nUG" secondAttribute="bottom" id="edU-uX-oOA"/>
                             <constraint firstItem="sqv-lb-bof" firstAttribute="top" secondItem="6Rq-2h-nUG" secondAttribute="top" constant="43" id="gQC-D0-1UT"/>
+                            <constraint firstItem="6q5-Pv-a5J" firstAttribute="leading" secondItem="LGo-OY-km7" secondAttribute="trailing" constant="14" id="kAR-c5-yEN"/>
                             <constraint firstItem="Mpe-3T-HM8" firstAttribute="top" secondItem="Z3E-bm-s9e" secondAttribute="bottom" constant="30" id="kct-KB-Bv7"/>
                             <constraint firstItem="f3i-x5-0bc" firstAttribute="top" secondItem="sqv-lb-bof" secondAttribute="bottom" constant="30" id="krl-vD-FfL"/>
                             <constraint firstItem="zVa-iK-m8L" firstAttribute="top" secondItem="6Rq-2h-nUG" secondAttribute="top" constant="23" id="qt8-jU-lC4"/>
@@ -492,6 +501,7 @@
                     <connections>
                         <outlet property="hostingView" destination="LGo-OY-km7" id="xQ1-2h-e3p"/>
                         <outlet property="hostingViewSound" destination="zVa-iK-m8L" id="c4Y-ba-5UC"/>
+                        <outlet property="predictedLabel" destination="6q5-Pv-a5J" id="A5f-wj-fhJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TR9-bJ-y20" userLabel="First Responder" sceneMemberID="firstResponder"/>

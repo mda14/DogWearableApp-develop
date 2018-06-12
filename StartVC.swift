@@ -28,6 +28,7 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     @IBOutlet weak var hostingView: CPTGraphHostingView!
     @IBOutlet weak var hostingViewSound: CPTGraphHostingView!
     
+    @IBOutlet weak var predictedLabel: UITextField!
     var response: AWSCognitoIdentityUserGetDetailsResponse?
     var user: AWSCognitoIdentityUser?
     var pool: AWSCognitoIdentityUserPool?
@@ -50,10 +51,22 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var xCounter = 0
     var xCounterSound = 0
     
+    // variables for passing data to prediction function
+    
+    var x_buffer = [Double] ()
+    var x_temp = Double()
+    var y_buffer = [Double] ()
+    var y_temp = Double ()
+    var z_buffer = [Double] ()
+    var z_temp = Double()
+    // windowing variable (determines size of buffers)
+    var n = 5
+    
     // Create UDP socket that connects to address and port of ESP32 board
     let client = UDPClient(address: "192.168.4.1", port: 3333)
     
     var timerBackground : Timer?
+    var timerPredictionBackground : Timer?
     
     
     
@@ -258,10 +271,21 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             print("Client address:  \(self.client.address)")
             // Send 'start' string for board to start sending data
             _ = self.client.send(string: "start")
-            
+            // 0.066 works
             self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.066, repeats: true) {
-                timerBackground in self.someBackgroundTask(timer: self.timerBackground!)
+                timerBackground in let (x_temp, y_temp, z_temp) = self.someBackgroundTask(timer: self.timerBackground!)
+                self.x_buffer.append(x_temp); self.y_buffer.append(y_temp); self.z_buffer.append(z_temp)
+                print(x_temp, y_temp, z_temp)
+                print("Size of buffer:", self.x_buffer.count)
+                if(self.x_buffer.count == self.n) {
+                    let output = self.accelerationPrediction(x: self.x_buffer, y: self.y_buffer, z: self.z_buffer)
+                    print("done accelerationPrediction")
+                    let text = "Predicted: " + String(output)
+                    self.predictedLabel.text = text
+                    self.x_buffer.removeAll(); self.y_buffer.removeAll(); self.z_buffer.removeAll()
+                }
             }
+            
             
         }
     }
@@ -328,15 +352,15 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     }
     
     // MARK: - Plot incoming data
-    func someBackgroundTask(timer:Timer) {
+    func someBackgroundTask(timer:Timer) -> (Double, Double, Double) {
         var accelData: [Byte] = []; var soundData: [Byte] = []; var x: Double?; var y: Double?; var z: Double?
+        var x_send = Double(1); var y_send = Double(1); var z_send = Double(1)
         print("do some background task")
 
         
         DispatchQueue.global(qos: DispatchQoS.default.qosClass).async {
             print("do some background task in async")
             let raw = self.client.recv(512)
-//            print("Incoming raw data: \(String(describing: raw.0!))")
             
             if (raw.0?.count == self.dataLength){
                 accelData = Array(raw.0![0...5])
@@ -358,7 +382,11 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             } else {
                 z = Double(Double(accelData[4]) - 1 + (Double(accelData[5])-100)/100)
             }
-
+            
+            self.x_temp = x!
+            self.y_temp = y!
+            self.z_temp = z!
+            
 
             // add x,y,z to accelerometer plot
             let xDataPoint: plotDataType = [.X: self.X, .Y: x!]
@@ -370,7 +398,6 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             self.xContent.append(xDataPoint)
             self.yContent.append(yDataPoint)
             self.zContent.append(zDataPoint)
-            
             
             
             // add soundData to another plot
@@ -389,12 +416,12 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 i = i+23
                 sum = 0
             }
-
+            
 
         }
         
             DispatchQueue.main.async {
-            print("update some UI")
+                print("update some UI")
                 // update accelerometer plot
                 self.dataForPlotX = self.xContent
                 self.dataForPlotY = self.yContent
@@ -417,6 +444,46 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
                 self.xCounterSound = self.xCounterSound + 21
             }
         
+        // return acceleration values for behaviour prediction
+        x_send = self.x_temp; y_send = self.y_temp; z_send = self.z_temp
+        return (x_send, y_send, z_send)
+        
+        
+    }
+    
+    // function to predict dog behaviour from accelerometer data
+    func accelerationPrediction (x: [Double], y: [Double], z: [Double]) -> String {
+        var output = DogBehaviourOutput(label: 0)
+        // perform feature extraction
+        let (mean_x,std_x,skew_x,max_x,min_x, mean_y,std_y,skew_y,max_y,min_y,mean_z,std_z,skew_z,max_z,min_z,x_z,y_z,x_y,
+        fft_mean_x,fft_std_x,fft_skew_x,fft_max_x,fft_2max_x,fft_min_x,
+        fft_mean_y,fft_std_y,fft_skew_y,fft_max_y,fft_2max_y,fft_min_y,
+        fft_mean_z,fft_std_z,fft_skew_z,fft_max_z,fft_2max_z,fft_min_z,
+        psd_mean_x,psd_max_x,psd_2max_x,
+        psd_mean_y,psd_max_y,psd_2max_y,
+        psd_mean_z,psd_max_z,psd_2max_z) = featureExtraction(x: x, y: y, z: z)
+        let mlmodel = DogBehaviour()
+ 
+        do {
+            output = try mlmodel.prediction(mean_x: mean_x, std_x: std_x, skew_x: skew_x, max_x: max_x!, min_x: min_x!, mean_y: mean_y, std_y: std_y, skew_y: skew_y, max_y: max_y!, min_y: min_y!, mean_z: mean_z, std_z: std_z, skew_z: skew_z, max_z: max_z!, min_z: min_z!, x_z: x_z, y_z: y_z, x_y: x_y, fft_mean_x: fft_mean_x, fft_std_x: fft_std_x, fft_skew_x: fft_skew_x, fft_max_x: fft_max_x, fft_2max_x: fft_2max_x, fft_min_x: fft_min_x!, fft_mean_y: fft_mean_y, fft_std_y: fft_std_y, fft_skew_y: fft_skew_y, fft_max_y: fft_max_y, fft_2max_y: fft_2max_y, fft_min_y: fft_min_y!, fft_mean_z: fft_mean_z, fft_std_z: fft_std_z, fft_skew_z: fft_skew_z, fft_max_z: fft_max_z, fft_2max_z: fft_2max_z, fft_min_z: fft_min_z!, psd_mean_x: psd_mean_x, psd_max_x: psd_max_x, psd_2max_x: psd_2max_x, psd_mean_y: psd_mean_y, psd_max_y: psd_max_y, psd_2max_y: psd_2max_y, psd_mean_z: psd_mean_z, psd_max_z: psd_max_z, psd_2max_z: psd_2max_z)
+        }
+            catch {
+            print("Error when mlmodel prediction")
+        }
+        var label = ""
+        switch output.label {
+        case 1:
+            label = "Down"
+        case 2:
+            label = "Sitting"
+        case 3:
+            label = "Standing"
+        case 4:
+            label = "Moving"
+        default:
+            label = "Unknown"
+        }
+        return label
     }
         
     // MARK: - Plot Data Source Methods

@@ -8,6 +8,7 @@ PODS:
   - AWSCore (2.6.10)
   - CocoaAsyncSocket (7.6.2)
   - CorePlot (2.2)
+  - Surge (2.0.0)
   - SwiftSocket (2.0.2)
 
 DEPENDENCIES:
@@ -16,6 +17,7 @@ DEPENDENCIES:
   - AWSCore
   - CocoaAsyncSocket
   - CorePlot
+  - Surge
   - SwiftSocket
 
 SPEC CHECKSUMS:
@@ -25,8 +27,9 @@ SPEC CHECKSUMS:
   AWSCore: 5bb072a6b5b185f43ddbd239d6554d2f8a285ad2
   CocoaAsyncSocket: 3541e024f48c54b251638ef72d51dd42808de932
   CorePlot: cbe0c6e14220705e32e06a89c7d6a5a908b7d7d8
+  Surge: 1f0286bc5f0fe4283f3455479895bf85c7ef7760
   SwiftSocket: 6f4c9c63fbc5c1d61188936bb3c599fd546f40ae
 
-PODFILE CHECKSUM: 06d3109621e70b58562700ee104c877de29e7c09
+PODFILE CHECKSUM: b3bbec3016b67e1af25fc4f087820eba4671aebb
 
 COCOAPODS: 1.3.1
