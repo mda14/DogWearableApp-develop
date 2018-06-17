@@ -64,7 +64,8 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     var z_temp = Double()
     // windowing variable (determines size of buffers)
     var n = 5
-    
+    // legend color
+    var greyForLegend = UIColor(red: 211.0/255.0, green: 211.0/255.0, blue: 211.0/255.0, alpha: 0.8)
     // Create UDP socket that connects to address and port of ESP32 board
     let client = UDPClient(address: "192.168.4.1", port: 3333)
     
@@ -238,6 +239,12 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         soundPlot.plotSymbol = plotSymbol
         
         self.scatterGraph = newGraph
+        // add legend to scatterGraph
+        let legend = CPTLegend(graph: newGraph)
+        //legend.borderColor =
+        legend.backgroundColor = greyForLegend.cgColor
+        newGraph.legend = legend
+        newGraph.legendAnchor = CPTRectAnchor.topLeft
         self.scatterGraphSound = newGraphSound
         
     }
@@ -289,8 +296,8 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             print("Client address:  \(self.client.address)")
             // Send 'start' string for board to start sending data
             _ = self.client.send(string: "start")
-            // timeInterval = 0.066 works
-            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.066, repeats: true) {
+            // timeInterval = 0.064 so 8000 data points per second
+            self.timerBackground = Timer.scheduledTimer(withTimeInterval: 0.064, repeats: true) {
                 timerBackground in let (x_temp, y_temp, z_temp) = self.someBackgroundTask(timer: self.timerBackground!)
                 self.x_buffer.append(x_temp); self.y_buffer.append(y_temp); self.z_buffer.append(z_temp)
                 //print(x_temp, y_temp, z_temp)
@@ -327,10 +334,10 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
         self.zContent.removeAll()
         self.soundContent.removeAll()
         
-        self.dataForPlotX = self.xContent
-        self.dataForPlotY = self.yContent
-        self.dataForPlotZ = self.zContent
-        self.dataForPlotSound = self.soundContent
+        self.dataForPlotX.removeAll()
+        self.dataForPlotY.removeAll()
+        self.dataForPlotZ.removeAll()
+        self.dataForPlotSound.removeAll()
         
         self.plotSpace?.yRange = CPTPlotRange(location:-7, length:18.0)
         self.plotSpace?.xRange = CPTPlotRange(location:-10, length:100.0)
