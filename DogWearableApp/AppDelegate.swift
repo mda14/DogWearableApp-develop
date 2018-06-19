@@ -8,6 +8,7 @@
 
 import UIKit
 import AWSCognitoIdentityProvider
+import AWSMobileClient
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegate {
@@ -55,6 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UITabBarControllerDelegat
         pool.delegate = self
         
         return true
+        //return AWSMobileClient.sharedInstance().interceptApplication(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
     func applicationDidFinishLaunching(_ application: UIApplication) {

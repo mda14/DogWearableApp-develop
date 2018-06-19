@@ -11,6 +11,7 @@ import SwiftSocket
 import AWSCognitoIdentityProvider
 import CorePlot
 import SystemConfiguration.CaptiveNetwork
+import AWSS3
 
 class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rotatable {
     // variables for graphs
@@ -358,6 +359,39 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
     
     @IBAction func saveData(_ sender: Any) {
         // save current plot into user data to AWS
+        // NOTE: from AWS Downloading a file from and uploading a file to a bucket, use the same coding pattern. An important difference is that download: does not succeed until the download is complete, blocking any flow that depends on that success. Upload returns immediately and can therefore be safely called on the main thread.
+//        let transferManager = AWSS3TransferManager.default()
+//        let uploadingFileURL = URL(fileURLWithPath: "https://s3.console.aws.amazon.com/s3/buckets/dogwearableapp/myTestFile.txt")
+//
+//        let uploadRequest = AWSS3TransferManagerUploadRequest()
+//
+//        uploadRequest?.bucket = "dogwearableapp"
+//        uploadRequest?.key = "myTestFile.txt"
+//        uploadRequest?.body = uploadingFileURL
+//
+//        transferManager.upload(uploadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
+//
+//            if let error = task.error as NSError? {
+//                if error.domain == AWSS3TransferManagerErrorDomain, let code = AWSS3TransferManagerErrorType(rawValue: error.code) {
+//                    switch code {
+//                    case .cancelled, .paused:
+//                        break
+//                    default:
+//                        print("Error uploading: \(uploadRequest?.key) Error: \(error)")
+//                    }
+//                } else {
+//                    print("Error uploading: \(uploadRequest?.key) Error: \(error)")
+//                }
+//                return nil
+//            }
+//
+//            let uploadOutput = task.result
+//            print("Upload complete for: \(uploadRequest?.key)")
+//            return nil
+//        })
+        uploadData()
+        //uploadData(input: self.xContent as AnyObject)
+        
     }
     
     @IBAction func signOut(_ sender: Any) {
@@ -511,6 +545,53 @@ class StartVC: UIViewController, CPTScatterPlotDataSource, CPTAxisDelegate, Rota
             label = "Unknown"
         }
         return (label, probability!)
+    }
+    
+    // function to upload data
+    
+    func uploadData() {
+//        var byteBuffer: [UInt8] = []
+//        dataForPlotX.withUnsafeBytes {
+//            byteBuffer.append(contentsOf: $0)
+//        }
+        let data = Data() // Data to be uploaded
+        
+        let expression = AWSS3TransferUtilityUploadExpression()
+        expression.progressBlock = {(task, progress) in
+            DispatchQueue.main.async(execute: {
+                // Do something e.g. Update a progress bar.
+                print("update in progress")
+            })
+        }
+        
+        var completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock?
+        completionHandler = { (task, error) -> Void in
+            DispatchQueue.main.async(execute: {
+                // Do something e.g. Alert a user for transfer completion.
+                // On failed uploads, `error` contains the error object.
+                print("failed upload")
+            })
+        }
+        
+        let transferUtility = AWSS3TransferUtility.default()
+        
+        transferUtility.uploadData(data ,
+                                   bucket: "dogwearableapp-userfiles-mobilehub-2045267296",
+                                   key: "testFile.txt",
+                                   contentType: "text/plain",
+                                   expression: expression,
+                                   completionHandler: completionHandler).continueWith {
+                                    (task) -> AnyObject? in
+                                    if let error = task.error {
+                                        print("Error: \(error.localizedDescription)")
+                                    }
+                                    
+                                    if let _ = task.result {
+                                        // Do something with uploadTask.
+                                        print("upload complete")
+                                    }
+                                    return nil;
+        }
     }
         
     // MARK: - Plot Data Source Methods

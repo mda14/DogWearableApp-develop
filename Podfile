@@ -8,6 +8,8 @@ target 'DogWearableApp' do
     pod 'AWSCognito'
     pod 'AWSCognitoIdentityProvider'
     pod 'AWSCore'
+    pod 'AWSS3'
+    pod 'AWSMobileClient'
     pod 'CorePlot'
     pod 'Surge'
     

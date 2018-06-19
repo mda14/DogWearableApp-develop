@@ -1,4 +1,6 @@
 PODS:
+  - AWSAuthCore (2.6.10):
+    - AWSCore (= 2.6.10)
   - AWSCognito (2.6.10):
     - AWSCore (= 2.6.10)
   - AWSCognitoIdentityProvider (2.6.10):
@@ -6,6 +8,10 @@ PODS:
     - AWSCore (= 2.6.10)
   - AWSCognitoIdentityProviderASF (1.0.1)
   - AWSCore (2.6.10)
+  - AWSMobileClient (2.6.10):
+    - AWSAuthCore (= 2.6.10)
+  - AWSS3 (2.6.10):
+    - AWSCore (= 2.6.10)
   - CocoaAsyncSocket (7.6.2)
   - CorePlot (2.2)
   - Surge (2.0.0)
@@ -15,21 +21,26 @@ DEPENDENCIES:
   - AWSCognito
   - AWSCognitoIdentityProvider
   - AWSCore
+  - AWSMobileClient
+  - AWSS3
   - CocoaAsyncSocket
   - CorePlot
   - Surge
   - SwiftSocket
 
 SPEC CHECKSUMS:
+  AWSAuthCore: d5e52ee671c815bee92c8fc1077fb6bd526f026a
   AWSCognito: 94d97a52c51310dfd20f2db5dc4fce7ebce0e8dc
   AWSCognitoIdentityProvider: f88d27fef26b131191da06c0a9a398e3c686945c
   AWSCognitoIdentityProviderASF: f94f1a502e72ef3d0a1de93e10bf7a79c8698118
   AWSCore: 5bb072a6b5b185f43ddbd239d6554d2f8a285ad2
+  AWSMobileClient: 6bdf1228aa064a9f2ee9db1486f09bfc6bc64c1e
+  AWSS3: 1124570c2c2dba6be7e6e67d123cc5181073c53d
   CocoaAsyncSocket: 3541e024f48c54b251638ef72d51dd42808de932
   CorePlot: cbe0c6e14220705e32e06a89c7d6a5a908b7d7d8
   Surge: 1f0286bc5f0fe4283f3455479895bf85c7ef7760
   SwiftSocket: 6f4c9c63fbc5c1d61188936bb3c599fd546f40ae
 
-PODFILE CHECKSUM: b3bbec3016b67e1af25fc4f087820eba4671aebb
+PODFILE CHECKSUM: 05b750efbdd0c658f0fda23253dd0ea87cbaf0c2
 
 COCOAPODS: 1.3.1

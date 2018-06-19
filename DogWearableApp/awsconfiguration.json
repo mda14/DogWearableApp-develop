@@ -1,0 +1,46 @@
+{
+  "UserAgent": "MobileHub/1.0",
+  "Version": "1.0",
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "us-east-2:11e12876-680b-430b-b556-6a17479e4b49",
+        "Region": "us-east-2"
+      }
+    }
+  },
+  "IdentityManager": {
+    "Default": {}
+  },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "us-east-2_ap5WZLSbp",
+      "AppClientId": "6u1ve1gmsi4vg5oshnvbkvi19g",
+      "AppClientSecret": "135ugl8mac8k7q4hvqlh8t3ldjknrj1fj6qlmlpeoiqgd8dujpvg",
+      "Region": "us-east-2"
+    }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "dogwearableapp-userfiles-mobilehub-2045267296",
+      "Region": "us-east-2"
+    }
+  },
+  "PinpointAnalytics": {
+    "Default": {
+      "AppId": "fad6a8add2eb4bad94335eb29af0d5d6",
+      "Region": "us-east-1"
+    }
+  },
+  "PinpointTargeting": {
+    "Default": {
+      "Region": "us-east-1"
+    }
+  },
+  "UserFileManager": {
+    "Default": {
+      "Bucket": "dogwearableapp-userfiles-mobilehub-2045267296",
+      "Region": "us-east-2"
+    }
+  }
+}

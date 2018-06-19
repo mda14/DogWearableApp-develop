@@ -8,6 +8,7 @@
 
 import Foundation
 import AWSCognitoIdentityProvider
+import AWSCore
 
 let CognitoIdentityUserPoolRegion: AWSRegionType = .USEast2
 let CognitoIdentityUserPoolId = "us-east-2_ap5WZLSbp"
@@ -16,3 +17,6 @@ let CognitoIdentityUserPoolAppClientSecret = "15u0emtr9a4mq6sne97k7rrsldpe2l3ecq
 
 let AWSCognitoUserPoolsSignInProviderKey = "UserPool"
 
+let S3BucketName: String = "dogwearableapp-userfiles-mobilehub-2045267296"   // Update this to your bucket name
+//let S3DownloadKeyName: String = "test-image.png"    // Name of file to be downloaded
+//let S3UploadKeyName: String = "test-image.png"      // Name of file to be uploaded
